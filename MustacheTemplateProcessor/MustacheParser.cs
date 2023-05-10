@@ -1,9 +1,9 @@
-using MustacheParse.Common;
-using MustacheParse.LexemeAnalyzer;
-using MustacheParse.Models;
-using MustacheParse.StatementParsers;
+using MustacheTemplateProcessor.Common;
+using MustacheTemplateProcessor.LexemeAnalyzer;
+using MustacheTemplateProcessor.Models;
+using MustacheTemplateProcessor.StatementParsers;
 
-namespace MustacheParse;
+namespace MustacheTemplateProcessor;
 
 public class MustacheParser
 {

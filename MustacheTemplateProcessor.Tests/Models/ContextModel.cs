@@ -1,4 +1,4 @@
-﻿namespace MustacheParse.Tests.Models;
+﻿namespace MustacheTemplateProcessor.Tests.Models;
 
 public class ComplexValue
 {

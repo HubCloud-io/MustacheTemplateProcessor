@@ -1,7 +1,7 @@
-﻿using MustacheParse.Common;
-using MustacheParse.Models;
+﻿using MustacheTemplateProcessor.Common;
+using MustacheTemplateProcessor.Models;
 
-namespace MustacheParse.StatementParsers;
+namespace MustacheTemplateProcessor.StatementParsers;
 
 public class ForStatementParser : IStatementParser
 {

@@ -1,7 +1,7 @@
-using MustacheParse.Models;
-using MustacheParse.Tests.Models;
+using MustacheTemplateProcessor.Models;
+using MustacheTemplateProcessor.Tests.Models;
 
-namespace MustacheParse.Tests;
+namespace MustacheTemplateProcessor.Tests;
 
 public class MustacheParserTests
 {

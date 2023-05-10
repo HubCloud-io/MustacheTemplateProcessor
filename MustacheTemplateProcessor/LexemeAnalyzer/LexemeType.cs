@@ -1,4 +1,4 @@
-﻿namespace MustacheParse.LexemeAnalyzer;
+﻿namespace MustacheTemplateProcessor.LexemeAnalyzer;
 
 public enum LexemeType
 {

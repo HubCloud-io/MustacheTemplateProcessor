@@ -7,6 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <RootNamespace>MustacheTemplateProcessor.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MustacheParse\MustacheParse.csproj" />
+      <ProjectReference Include="..\MustacheTemplateProcessor\MustacheTemplateProcessor.csproj" />
     </ItemGroup>
 
 </Project>

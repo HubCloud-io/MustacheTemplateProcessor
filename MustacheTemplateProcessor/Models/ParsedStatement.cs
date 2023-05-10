@@ -1,4 +1,4 @@
-namespace MustacheParse.Models;
+namespace MustacheTemplateProcessor.Models;
 
 public class ParsedStatement
 {

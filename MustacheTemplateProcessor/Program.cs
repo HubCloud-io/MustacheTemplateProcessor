@@ -1,7 +1,7 @@
 ﻿using Fluid;
 using System;
 
-namespace MustacheParse;
+namespace MustacheTemplateProcessor;
 
 internal class Program
 {

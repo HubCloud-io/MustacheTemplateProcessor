@@ -1,6 +1,6 @@
-﻿using MustacheParse.Models;
+﻿using MustacheTemplateProcessor.Models;
 
-namespace MustacheParse.StatementParsers;
+namespace MustacheTemplateProcessor.StatementParsers;
 
 public class SimpleValueParser : IStatementParser
 {

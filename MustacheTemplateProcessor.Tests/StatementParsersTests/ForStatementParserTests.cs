@@ -1,8 +1,8 @@
-﻿using MustacheParse.Models;
-using MustacheParse.StatementParsers;
-using MustacheParse.Tests.Models;
+﻿using MustacheTemplateProcessor.Models;
+using MustacheTemplateProcessor.StatementParsers;
+using MustacheTemplateProcessor.Tests.Models;
 
-namespace MustacheParse.Tests.StatementParsersTests;
+namespace MustacheTemplateProcessor.Tests.StatementParsersTests;
 
 public class ForStatementParserTests
 {

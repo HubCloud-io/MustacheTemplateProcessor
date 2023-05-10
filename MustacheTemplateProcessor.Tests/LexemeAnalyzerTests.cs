@@ -1,4 +1,4 @@
-﻿namespace MustacheParse.Tests;
+﻿namespace MustacheTemplateProcessor.Tests;
 
 public class LexemeAnalyzerTests
 {

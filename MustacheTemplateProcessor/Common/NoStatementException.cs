@@ -1,4 +1,4 @@
-namespace MustacheParse.Common;
+namespace MustacheTemplateProcessor.Common;
 
 public class NoStatementException : SystemException
 {
