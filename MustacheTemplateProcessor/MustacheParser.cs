@@ -78,7 +78,6 @@ public class MustacheParser : IMustacheParser
         IStatementParser parser;
         switch (type)
         {
-            // ToDo: StatementType.If implement
             case StatementType.If:
                 parser = new IfStatementParser();
                 break;
