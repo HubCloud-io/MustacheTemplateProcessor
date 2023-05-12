@@ -4,7 +4,7 @@ using MustacheTemplateProcessor.StatementParsers;
 
 namespace MustacheTemplateProcessor;
 
-public class MustacheParser
+public class MustacheParser : IMustacheParser
 {
     private readonly StatementHelper _statementHelper = new();
 
