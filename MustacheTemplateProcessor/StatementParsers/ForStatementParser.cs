@@ -1,11 +1,10 @@
-﻿using MustacheTemplateProcessor.Common;
-using MustacheTemplateProcessor.Models;
+﻿using MustacheTemplateProcessor.Models;
 
 namespace MustacheTemplateProcessor.StatementParsers;
 
 public class ForStatementParser : IStatementParser
 {
-    private readonly MustacheDictContextParser _parser = new ();
+    private readonly MustacheParser _parser = new ();
     
     public string? Process(StatementContext statementContext)
     {
@@ -24,51 +23,49 @@ public class ForStatementParser : IStatementParser
         var itemName = GetItemName(statementContext.StartStatement);
         if (itemName is null)
             return string.Empty;
-        
-        var collection = context.GetType()
-            .GetProperty(collectionName)
-            .GetValue(context, null);
-        
-        if (!(collection is IEnumerable<dynamic> items))
-            throw new DataContextException();
 
-        var output = string.Empty;
-        foreach (var item in items)
+        IEnumerable<dynamic>? items;
+        if (!collectionName.Contains("."))
         {
-            output += statementContext.Body;
+            if (!context.TryGetValue(collectionName, out var collection) || !(collection is IEnumerable<dynamic>))
+                return string.Empty;
+            else
+                items = collection as IEnumerable<dynamic>;
+        }
+        else
+        {
+            var statementArray = collectionName.Split('.');
+            var localContext = context[statementArray.First()];
+
+            for (var i = 1; i < statementArray.Length; i++)
+            {
+                var item = statementArray[i];
+                localContext = localContext?.GetType()
+                    .GetProperty(item)
+                    ?.GetValue(localContext, null);
+            }
+            
+            items = localContext as IEnumerable<dynamic>;
         }
         
-        return output;
-    }
-
-    public string? Process(StatementDictContext statementContext)
-    {
-        var context = statementContext.Context;
-        if (context is null || string.IsNullOrEmpty(statementContext.StartStatement?.Statement) || string.IsNullOrEmpty(statementContext.Body))
-            return string.Empty;
-        
-        if (statementContext.StartStatement.Statement.IndexOf("{{", StringComparison.InvariantCulture) == -1 ||
-            statementContext.StartStatement.Statement.IndexOf("}}", StringComparison.InvariantCulture) == -1)
-            return statementContext.StartStatement.Statement;
-
-        var collectionName = GetCollectionName(statementContext.StartStatement);
-        if (collectionName is null)
-            return string.Empty;
-        
-        var itemName = GetItemName(statementContext.StartStatement);
-        if (itemName is null)
-            return string.Empty;
-
-        if (!context.TryGetValue(collectionName, out var collection) || !(collection is IEnumerable<dynamic> items))
-            return string.Empty;
-        
         var output = string.Empty;
+
+        if (items is null)
+            return output;
+        
         var innerContext = new Dictionary<string, object>(context);
         foreach (var item in items)
         {
             innerContext[itemName] = item;
-            var val = _parser.Parse(statementContext.Body, innerContext);
-            output += val;
+            try
+            {
+                var val = _parser.Parse(statementContext.Body, innerContext);
+                output += val;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
         
         return output;

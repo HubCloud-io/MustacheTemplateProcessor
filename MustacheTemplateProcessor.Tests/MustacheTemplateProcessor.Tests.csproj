@@ -22,4 +22,8 @@
       <ProjectReference Include="..\MustacheTemplateProcessor\MustacheTemplateProcessor.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="StatementParsersTests\" />
+    </ItemGroup>
+
 </Project>

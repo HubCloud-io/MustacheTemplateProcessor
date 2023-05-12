@@ -1,13 +1,15 @@
-using MustacheTemplateProcessor.Models;
-using MustacheTemplateProcessor.Tests.Models;
+﻿using MustacheTemplateProcessor.Tests.Models;
 
 namespace MustacheTemplateProcessor.Tests;
 
 public class MustacheParserTests
 {
-    // [Test]
+    private MustacheParser GetParser() => new();
+
+    [Test]
     public void PlainText_Test()
     {
+        // Arrange
         var expression = "<head>" +
                          "<div class=\"row\">" +
                          "<div class=\"col-sm-4\">" +
@@ -16,18 +18,82 @@ public class MustacheParserTests
                          "</div>" +
                          "</head>";
 
-        var emptyContext = new List<string>();
-        var parser = new MustacheParser();
+        var emptyContext = new Dictionary<string, object>();
+        var parser = GetParser();
+
+        // Act
         var output = parser.Parse(expression, emptyContext);
 
+        // Assert
         Assert.That(output, Is.EqualTo(expression));
     }
 
-    // [Test]
+    [Test]
+    public void SimpleValueStatement_Test()
+    {
+        // Arrange
+        var expression = "<head>" +
+                         "<div class=\"col-sm-4\">" +
+                         "<span>{{SimpleValue}}</span>" +
+                         "</div>" +
+                         "</head>";
+
+        var reference = "<head>" +
+                        "<div class=\"col-sm-4\">" +
+                        "<span>42</span>" +
+                        "</div>" +
+                        "</head>";
+
+        var context = new Dictionary<string, object>
+        {
+            {"SimpleValue", "42"}
+        };
+
+        var parser = GetParser();
+
+        // Act
+        var output = parser.Parse(expression, context);
+
+        // Assert
+        Assert.That(output, Is.EqualTo(reference));
+    }
+
+    [Test]
+    public void SimpleValueStatement_2_Test()
+    {
+        // Arrange
+        var expression = "<head>" +
+                         "<div class=\"col-sm-4\">" +
+                         "<span>{{SimpleValue.Id}}</span>" +
+                         "</div>" +
+                         "</head>";
+
+        var reference = "<head>" +
+                        "<div class=\"col-sm-4\">" +
+                        "<span>42</span>" +
+                        "</div>" +
+                        "</head>";
+
+        var context = new Dictionary<string, object>
+        {
+            {"SimpleValue", new ItemModel {Id = 42}}
+        };
+
+        var parser = GetParser();
+
+        // Act
+        var output = parser.Parse(expression, context);
+
+        // Assert
+        Assert.That(output, Is.EqualTo(reference));
+    }
+
+    [Test]
     public void SimpleForStatement_Test()
     {
+        // Arrange
         var expression = "<head>" +
-                         "{{for item in FirstItems}}" +
+                         "{{for item in Items}}" +
                          "<div class=\"col-sm-4\">" +
                          "<span>Hello world!</span>" +
                          "</div>" +
@@ -43,26 +109,31 @@ public class MustacheParserTests
                         "</div>" +
                         "</head>";
 
-        var context = new ContextModel
+        var items = new List<ItemModel>
         {
-            FirstItems = new List<ItemModel>
-            {
-                new(),
-                new()
-            }
+            new(),
+            new()
         };
-        
-        var parser = new MustacheParser();
+        var context = new Dictionary<string, object>
+        {
+            {"Items", items}
+        };
+
+        var parser = GetParser();
+
+        // Act
         var output = parser.Parse(expression, context);
 
+        // Assert
         Assert.That(output, Is.EqualTo(reference));
     }
-    
-    // [Test]
-    public void ForStatement_Test()
+
+    [Test]
+    public void ForStatement_WithValue_Test()
     {
+        // Arrange
         var expression = "<head>" +
-                         "{{for item in FirstItems}}" +
+                         "{{for item in Items}}" +
                          "<div class=\"col-sm-4\">" +
                          "<span>{{item.Id}}</span>" +
                          "</div>" +
@@ -78,140 +149,216 @@ public class MustacheParserTests
                         "</div>" +
                         "</head>";
 
-        var context = new ContextModel
+        var items = new List<ItemModel>
         {
-            FirstItems = new List<ItemModel>
-            {
-                new() { Id = 1 },
-                new() { Id = 2 }
-            }
+            new() {Id = 1},
+            new() {Id = 2}
         };
-        
-        var parser = new MustacheParser();
+        var context = new Dictionary<string, object>
+        {
+            {"Items", items}
+        };
+
+        var parser = GetParser();
+
+        // Act
         var output = parser.Parse(expression, context);
 
-        Assert.That(output, Is.EqualTo(reference));
-    }
-
-    // [Test]
-    public void SimpleValueStatement_Test()
-    {
-        var expression = "<head>" +
-                         "<div class=\"col-sm-4\">" +
-                         "<span>{{SimpleValue}}</span>" +
-                         "</div>" +
-                         "</head>";
-        
-        var reference = "<head>" +
-                        "<div class=\"col-sm-4\">" +
-                        "<span>42</span>" +
-                        "</div>" +
-                        "</head>";
-        
-        var context = new ContextModel
-        {
-            SimpleValue = 42
-        };
-        
-        var parser = new MustacheParser();
-        var output = parser.Parse(expression, context);
-        
+        // Assert
         Assert.That(output, Is.EqualTo(reference));
     }
     
-    // [Test]
-    public void SimpleValueStatement_2_Test()
+    [Test]
+    public void ForStatement_WithValue_2_Test()
     {
+        // Arrange
         var expression = "<head>" +
-                         "<div class=\"col-sm-4\">" +
-                         "<span>{{ComplexValue.InnerValue}}</span>" +
+                         "<div>" +
+                         "{{for item in FirstItems}}" +
+                         "<div>" +
+                         "<span>First items</span>" +
+                         "<span>{{item.Id}}</span>" +
+                         "</div>" +
+                         "{{end}}" +
+                         "</div>" +
+                         "---" +
+                         "<div>" +
+                         "{{for item in SecondItems}}" +
+                         "<div>" +
+                         "<span>Second items</span>" +
+                         "<span>{{item.Id}}</span>" +
+                         "</div>" +
+                         "{{end}}" +
                          "</div>" +
                          "</head>";
-        
+
         var reference = "<head>" +
-                        "<div class=\"col-sm-4\">" +
-                        "<span>42</span>" +
+                        "<div>" +
+                        "<div>" +
+                        "<span>First items</span>" +
+                        "<span>1</span>" +
+                        "</div>" +
+                        "<div>" +
+                        "<span>First items</span>" +
+                        "<span>2</span>" +
+                        "</div>" +
+                        "</div>" +
+                        "---" +
+                        "<div>" +
+                        "<div>" +
+                        "<span>Second items</span>" +
+                        "<span>3</span>" +
+                        "</div>" +
+                        "<div>" +
+                        "<span>Second items</span>" +
+                        "<span>4</span>" +
+                        "</div>" +
                         "</div>" +
                         "</head>";
-        
-        var context = new ContextModel
+
+        var firstItems = new List<ItemModel>
         {
-            ComplexValue = new ComplexValue
+            new() {Id = 1},
+            new() {Id = 2}
+        };
+        var secondItems = new List<ItemModel>
+        {
+            new() {Id = 3},
+            new() {Id = 4}
+        };
+        var context = new Dictionary<string, object>
+        {
+            {"FirstItems", firstItems},
+            {"SecondItems", secondItems}
+        };
+
+        var parser = GetParser();
+
+        // Act
+        var output = parser.Parse(expression, context);
+
+        // Assert
+        Assert.That(output, Is.EqualTo(reference));
+    }
+    
+    [Test]
+    public void ForStatement_InnerFor_Test()
+    {
+        // Arrange
+        var expression = "<head>" +
+                         "{{for item in Items}}" +
+                         "<div class=\"col-sm-4\">" +
+                         "<span>{{item.Id}}</span>" +
+                         "{{for innerItem in item.InnerItems}}" +
+                         "<span>{{innerItem.Id}}</span>" +
+                         "{{end}}" +
+                         "</div>" +
+                         "{{end}}" +
+                         "</head>";
+
+        var reference = "<head>" +
+                        "<div class=\"col-sm-4\">" +
+                        "<span>1</span>" +
+                        "<span>20</span>" +
+                        "<span>30</span>" +
+                        "</div>" +
+                        "</head>";
+
+        var items = new List<InnerItemModel>
+        {
+            new()
             {
-                InnerValue = 42
+                Id = 1,
+                InnerItems = new List<ItemModel>
+                {
+                    new() { Id = 20 },
+                    new() { Id = 30 }
+                }
             }
         };
-        
-        var parser = new MustacheParser();
+        var context = new Dictionary<string, object>
+        {
+            {"Items", items}
+        };
+
+        var parser = GetParser();
+
+        // Act
         var output = parser.Parse(expression, context);
-        
+
+        // Assert
         Assert.That(output, Is.EqualTo(reference));
     }
 
-    // [Test]
+    [Test]
     public void ComplexStatements_Test()
     {
         var expression = "<head>" +
-                         "<div class=\"first-for\">" +
+                         "<div>" +
                          "{{for item in FirstItems}}" +
-                         "<div class=\"inner\">" +
-                         "<span>Hello world</span>" +
+                         "<div>" +
+                         "<span>First items</span>" +
                          "<span>{{item.Id}}</span>" +
                          "</div>" +
                          "{{end}}" +
                          "</div>" +
-                         "<div class=\"second-for\">" +
+                         "---" +
+                         "<div>" +
                          "{{for item in SecondItems}}" +
-                         "<div class=\"inner\">" +
-                         "<span>Foo bar</span>" +
+                         "<div>" +
+                         "<span>Second items</span>" +
                          "<span>{{item.Id}}</span>" +
-                         "{{for item in InnerItems}}" +
-                         "<span>Inner</span>" +
+                         "{{for innerItem in item.InnerItems}}" +
+                         "<span>{{innerItem.Id}}</span>" +
                          "{{end}}" +
                          "</div>" +
                          "{{end}}" +
                          "</div>" +
                          "</head>";
-
+    
         var reference = "<head>" +
-                        "<div class=\"first-for\">" +
-                        "<div class=\"inner\">" +
-                        "<span>Hello world</span>" +
+                        "<div>" +
+                        "<div>" +
+                        "<span>First items</span>" +
                         "<span>42</span>" +
                         "</div>" +
                         "</div>" +
-                        "<div class=\"second-for\">" +
-                        "<div class=\"inner\">" +
-                        "<span>Foo bar</span>" +
+                        "---" +
+                        "<div>" +
+                        "<div>" +
+                        "<span>Second items</span>" +
                         "<span>142</span>" +
-                        "<span>Inner</span>" +
-                        "<span>Inner</span>" +
-                        "<span>Inner</span>" +
+                        "<span>55</span>" +
+                        "<span>66</span>" +
                         "</div>" +
                         "</div>" +
                         "</head>";
         
-        var context = new ContextModel
+        var firstItems = new List<ItemModel>
         {
-            FirstItems = new List<ItemModel>
-            {
-                new() {Id = 42}
-            },
-            SecondItems = new List<ItemModel>
-            {
-                new() {Id = 142}
-            },
-            InnerItems = new List<ItemModel>
-            {
-                new(),
-                new(),
-                new()
+            new() { Id = 42 }
+        };
+        var secondItems = new List<InnerItemModel>
+        {
+            new() 
+            { 
+                Id = 142,
+                InnerItems = new List<ItemModel>
+                {
+                    new () { Id = 55 },
+                    new () { Id = 66 }
+                }
             }
         };
-        
-        var parser = new MustacheParser();
+        var context = new Dictionary<string, object>
+        {
+            {"FirstItems", firstItems},
+            {"SecondItems", secondItems}
+        };
+    
+        var parser = GetParser();
         var output = parser.Parse(expression, context);
-
+    
         Assert.That(output, Is.EqualTo(reference));
     }
 }

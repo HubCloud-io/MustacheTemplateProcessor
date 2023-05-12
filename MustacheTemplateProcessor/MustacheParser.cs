@@ -1,5 +1,4 @@
-using MustacheTemplateProcessor.Common;
-using MustacheTemplateProcessor.LexemeAnalyzer;
+﻿using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 using MustacheTemplateProcessor.StatementParsers;
 
@@ -9,14 +8,14 @@ public class MustacheParser
 {
     private readonly StatementHelper _statementHelper = new();
 
-    public string Parse(string expression, dynamic context)
+    public string Parse(string expression, Dictionary<string, object> context)
     {
         var output = string.Empty;
         var innerExpression = expression;
-
+        
         do
         {
-            ParsedStatement? startStatement = null;
+            ParsedStatement? startStatement;
             ParsedStatement? endStatement = null;
             StatementContext? statementContext = null;
 
@@ -72,13 +71,14 @@ public class MustacheParser
 
         return output;
     }
-
+    
     private string? GetStatementValue(StatementContext statementContext, StatementType type)
     {
         var result = string.Empty;
         IStatementParser parser;
         switch (type)
         {
+            // ToDo: StatementType.If implement
             case StatementType.For:
                 parser = new ForStatementParser();
                 break;
@@ -90,7 +90,6 @@ public class MustacheParser
         }
         
         result = parser.Process(statementContext);
-        
         return result;
     }
 }
