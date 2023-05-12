@@ -289,6 +289,34 @@ public class MustacheParserTests
         // Assert
         Assert.That(output, Is.EqualTo(reference));
     }
+
+    [Test]
+    public void IfStatement_Test()
+    {
+        // Arrange
+        var expression = "<head>" +
+                         "{{if state == 1}}" +
+                         "<span>Hello world</span>" +
+                         "{{end}}" +
+                         "</head>";
+
+        var reference = "<head>" +
+                        "<span>Hello world</span>" +
+                        "</head>";
+
+        var context = new Dictionary<string, object>
+        {
+            {"state", 1}
+        };
+
+        var parser = GetParser();
+
+        // Act
+        var output = parser.Parse(expression, context);
+
+        // Assert
+        Assert.That(output, Is.EqualTo(reference));
+    }
     
     [Test]
     public void IfStatement_InnerFor_Test()
@@ -327,24 +355,63 @@ public class MustacheParserTests
         Assert.That(output, Is.EqualTo(reference));
     }
     
-    
     [Test]
-    public void IfStatement_Test()
+    public void IfStatement_SomeIfs_Test()
     {
         // Arrange
         var expression = "<head>" +
-                         "{{if state == 1}}" +
-                         "<span>Hello world</span>" +
+                         "{{if state1 == 1}}" +
+                         "<span>State 1</span>" +
+                         "{{end}}" +
+                         "{{if state2 == 2}}" +
+                         "<span>State 2</span>" +
+                         "{{end}}" +
+                         "{{if state3 == 3}}" +
+                         "<span>State 3</span>" +
                          "{{end}}" +
                          "</head>";
 
         var reference = "<head>" +
-                        "<span>Hello world</span>" +
+                        "<span>State 1</span>" +
+                        "<span>State 2</span>" +
                         "</head>";
 
         var context = new Dictionary<string, object>
         {
-            {"state", 1}
+            {"state1", 1},
+            {"state2", 2},
+            {"state3", 0}
+        };
+
+        var parser = GetParser();
+
+        // Act
+        var output = parser.Parse(expression, context);
+
+        // Assert
+        Assert.That(output, Is.EqualTo(reference));
+    }
+    
+    [Test]
+    public void IfStatement_InnerIf_Test()
+    {
+        // Arrange
+        var expression = "<head>" +
+                         "{{if state1 == 1}}" +
+                         "{{if state2 == 2}}" +
+                         "<span>Hello world!</span>" +
+                         "{{end}}" +
+                         "{{end}}" +
+                         "</head>";
+
+        var reference = "<head>" +
+                        "<span>Hello world!</span>" +
+                        "</head>";
+
+        var context = new Dictionary<string, object>
+        {
+            {"state1", 1},
+            {"state2", 2}
         };
 
         var parser = GetParser();
