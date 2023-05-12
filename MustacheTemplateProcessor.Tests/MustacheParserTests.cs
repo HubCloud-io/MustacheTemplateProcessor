@@ -289,6 +289,72 @@ public class MustacheParserTests
         // Assert
         Assert.That(output, Is.EqualTo(reference));
     }
+    
+    [Test]
+    public void IfStatement_InnerFor_Test()
+    {
+        // Arrange
+        var expression = "<head>" +
+                         "{{if state == 1}}" +
+                         "{{for item in Items}}" +
+                         "<span>Id = {{item.Id}}</span>" +
+                         "{{end}}" +
+                         "{{end}}" +
+                         "</head>";
+
+        var reference = "<head>" +
+                        "<span>Id = 20</span>" +
+                        "<span>Id = 30</span>" +
+                        "</head>";
+
+        var context = new Dictionary<string, object>
+        {
+            {"state", 1},
+            {"Items", new List<ItemModel>
+                {
+                    new() { Id = 20 },
+                    new() { Id = 30 }
+                }
+            }
+        };
+
+        var parser = GetParser();
+
+        // Act
+        var output = parser.Parse(expression, context);
+
+        // Assert
+        Assert.That(output, Is.EqualTo(reference));
+    }
+    
+    
+    [Test]
+    public void IfStatement_Test()
+    {
+        // Arrange
+        var expression = "<head>" +
+                         "{{if state == 1}}" +
+                         "<span>Hello world</span>" +
+                         "{{end}}" +
+                         "</head>";
+
+        var reference = "<head>" +
+                        "<span>Hello world</span>" +
+                        "</head>";
+
+        var context = new Dictionary<string, object>
+        {
+            {"state", 1}
+        };
+
+        var parser = GetParser();
+
+        // Act
+        var output = parser.Parse(expression, context);
+
+        // Assert
+        Assert.That(output, Is.EqualTo(reference));
+    }
 
     [Test]
     public void ComplexStatements_Test()

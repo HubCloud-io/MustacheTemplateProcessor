@@ -79,6 +79,9 @@ public class MustacheParser
         switch (type)
         {
             // ToDo: StatementType.If implement
+            case StatementType.If:
+                parser = new IfStatementParser();
+                break;
             case StatementType.For:
                 parser = new ForStatementParser();
                 break;
