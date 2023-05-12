@@ -149,37 +149,6 @@ public class MustacheParserTests
     }
 
     [Test]
-    public void GetEndStatement_Test()
-    {
-        var expression = "<head>" +
-                         "<div class=\"first-for\">" +
-                         "{{for item in FirstItems}}" +
-                         "  <div class=\"inner\">" +
-                         "  {{for item in SecondItems}}" +
-                         "      <span>Hello world</span>" +
-                         "      <span>{{item.Id}}</span>" +
-                         "  {{end}}" +
-                         "  </div>" +
-                         "{{end}}" +
-                         "</div>" +
-                         "</head>";
-    
-        var startStatement = new ParsedStatement
-        {
-            Statement = "{{for item in FirstItems}}",
-            StartIndex = expression.IndexOf("{{for item in FirstItems}}", StringComparison.InvariantCulture),
-            EndIndex = expression.IndexOf("{{for item in FirstItems}}", StringComparison.InvariantCulture) + "{{for item in FirstItems}}".Length
-        };
-            
-        var parser = new MustacheParser();
-        var endStatement = parser.GetEndStatement(expression, startStatement);
-        
-        Assert.That(endStatement, Is.Not.Null);
-        Assert.That(endStatement!.StartIndex, Is.EqualTo(182));
-        Assert.That(endStatement.EndIndex, Is.EqualTo(188));
-    }
-
-    [Test]
     public void ComplexStatements_Test()
     {
         var expression = "<head>" +

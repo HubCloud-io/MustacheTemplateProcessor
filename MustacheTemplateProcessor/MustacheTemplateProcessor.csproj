@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Fluid.Core" Version="2.4.0" />
+    <PackageReference Include="HubCloud.EvalEngine" Version="1.0.62" />
   </ItemGroup>
 
 </Project>

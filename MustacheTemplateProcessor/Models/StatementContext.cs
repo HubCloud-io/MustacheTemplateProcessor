@@ -1,9 +1,6 @@
 namespace MustacheTemplateProcessor.Models;
 
-public class StatementContext
+public class StatementContext : StatementContextBase
 {
-    public ParsedStatement? StartStatement { get; set; }
-    public ParsedStatement? EndStatement { get; set; }
-    public string? Body { get; set; }
     public dynamic? Context { get; set; }
 }
