@@ -1,9 +1,12 @@
-﻿namespace MustacheTemplateProcessor.Models;
+﻿using System.Collections.Generic;
 
-public class StatementContext
+namespace MustacheTemplateProcessor.Models
 {
-    public ParsedStatement? StartStatement { get; set; }
-    public ParsedStatement? EndStatement { get; set; }
-    public string? Body { get; set; }
-    public IDictionary<string, object>? Context { get; set; }
+    public class StatementContext
+    {
+        public ParsedStatement StartStatement { get; set; }
+        public ParsedStatement EndStatement { get; set; }
+        public string Body { get; set; }
+        public IDictionary<string, object> Context { get; set; }
+    }
 }

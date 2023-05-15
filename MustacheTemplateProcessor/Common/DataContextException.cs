@@ -1,6 +1,8 @@
-namespace MustacheTemplateProcessor.Common;
+using System;
 
-public class DataContextException : SystemException
+namespace MustacheTemplateProcessor.Common
 {
-    
+    public class DataContextException : SystemException
+    {
+    }
 }

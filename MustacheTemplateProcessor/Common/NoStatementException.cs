@@ -1,6 +1,8 @@
-namespace MustacheTemplateProcessor.Common;
+using System;
 
-public class NoStatementException : SystemException
+namespace MustacheTemplateProcessor.Common
 {
-    
+    public class NoStatementException : SystemException
+    {
+    }
 }

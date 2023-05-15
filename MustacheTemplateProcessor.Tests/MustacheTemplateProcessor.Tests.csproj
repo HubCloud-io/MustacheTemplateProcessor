@@ -2,12 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <RootNamespace>MustacheTemplateProcessor.Tests</RootNamespace>
+        <OutputType>Library</OutputType>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,10 +22,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MustacheTemplateProcessor\MustacheTemplateProcessor.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="StatementParsersTests\" />
     </ItemGroup>
 
 </Project>

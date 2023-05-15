@@ -1,31 +1,34 @@
-﻿using EvalEngine.Engine;
+﻿using System;
+using System.Collections.Generic;
+using EvalEngine.Engine;
 using MustacheTemplateProcessor.Models;
 
-namespace MustacheTemplateProcessor.StatementParsers;
-
-public class SimpleValueParser : IStatementParser
+namespace MustacheTemplateProcessor.StatementParsers
 {
-    public string? Process(StatementContext statementContext)
+    public class SimpleValueParser : IStatementParser
     {
-        var context = statementContext.Context;
-        if (context is null || string.IsNullOrEmpty(statementContext.StartStatement?.Statement))
-            return string.Empty;
-
-        if (statementContext.StartStatement.Statement.IndexOf("{{", StringComparison.InvariantCulture) == -1 ||
-            statementContext.StartStatement.Statement.IndexOf("}}", StringComparison.InvariantCulture) == -1)
-            return statementContext.StartStatement.Statement;
-
-        var expression = statementContext.StartStatement.PureStatement!.Trim();
-
-        try
+        public string Process(StatementContext statementContext)
         {
-            var evaluator = new FormulaEvaluator(new Dictionary<string, object>(context));
-            var result = evaluator.Eval(expression);
-            return result?.ToString();
-        }
-        catch (Exception)
-        {
-            return null;
+            var context = statementContext.Context;
+            if (context is null || string.IsNullOrEmpty(statementContext.StartStatement?.Statement))
+                return string.Empty;
+
+            if (statementContext.StartStatement.Statement.IndexOf("{{", StringComparison.InvariantCulture) == -1 ||
+                statementContext.StartStatement.Statement.IndexOf("}}", StringComparison.InvariantCulture) == -1)
+                return statementContext.StartStatement.Statement;
+
+            var expression = statementContext.StartStatement.PureStatement.Trim();
+
+            try
+            {
+                var evaluator = new FormulaEvaluator(new Dictionary<string, object>(context));
+                var result = evaluator.Eval(expression);
+                return result?.ToString();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

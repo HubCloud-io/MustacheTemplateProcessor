@@ -1,5 +1,8 @@
-namespace MustacheTemplateProcessor.Common;
+using System;
 
-public class StatementParseException : SystemException
+namespace MustacheTemplateProcessor.Common
 {
+    public class StatementParseException : SystemException
+    {
+    }
 }

@@ -1,6 +1,9 @@
-﻿namespace MustacheTemplateProcessor;
+﻿using System.Collections.Generic;
 
-public interface IMustacheParser
+namespace MustacheTemplateProcessor
 {
-    string Parse(string expression, Dictionary<string, object> context);
+    public interface IMustacheParser
+    {
+        string Parse(string expression, Dictionary<string, object> context);
+    }
 }

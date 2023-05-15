@@ -1,9 +1,10 @@
-﻿namespace MustacheTemplateProcessor;
-
-public enum StatementType
+﻿namespace MustacheTemplateProcessor
 {
-    Undefined,
-    For,
-    If,
-    Value
+    public enum StatementType
+    {
+        Undefined,
+        For,
+        If,
+        Value
+    }
 }

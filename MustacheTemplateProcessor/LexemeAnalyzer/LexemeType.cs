@@ -1,10 +1,11 @@
-﻿namespace MustacheTemplateProcessor.LexemeAnalyzer;
-
-public enum LexemeType
+﻿namespace MustacheTemplateProcessor.LexemeAnalyzer
 {
-    PlainText,
-    ForStatement,
-    IfStatement,
-    EndStatement,
-    ValueStatement
+    public enum LexemeType
+    {
+        PlainText,
+        ForStatement,
+        IfStatement,
+        EndStatement,
+        ValueStatement
+    }
 }
