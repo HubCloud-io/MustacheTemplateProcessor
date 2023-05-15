@@ -1,5 +1,8 @@
-﻿namespace MustacheTemplateProcessor.Tests;
+﻿using MustacheTemplateProcessor.LexemeAnalyzer;
 
+namespace MustacheTemplateProcessor.Tests;
+
+[TestFixture]
 public class LexemeAnalyzerTests
 {
     [Test]
@@ -34,5 +37,24 @@ public class LexemeAnalyzerTests
         Assert.That(lexemes!.Length, Is.EqualTo(17));
         Assert.That(lexemes![1].Value, Is.EqualTo("{{for item in FirstItems}}"));
         Assert.That(lexemes![15].Value, Is.EqualTo("{{end}}"));
+    }
+
+    [TestCase("{{if flag = true }}", "IfStatement")]
+    [TestCase("{{ if flag = true }}", "IfStatement")]
+    [TestCase("{{ IF flag = true }}", "IfStatement")]
+    [TestCase("{{iffy flag = true }}", "PlainText")]
+    [TestCase("iffy flag = true", "PlainText")]
+    [TestCase("iffy means", "PlainText")]
+    public void GetLexemes_TemplateWithOneLexeme_Lexemes(string expression, string lexemeString)
+    {
+        
+        var analyser = new LexemeAnalyzer.LexemeAnalyzer();
+        var lexemes = analyser.GetLexemes(expression).ToArray();
+
+        var lexemeCheck = Enum.Parse<LexemeType>(lexemeString);
+
+        Assert.AreEqual(2, lexemes.Length);
+        Assert.AreEqual(lexemeCheck, lexemes[1].Type);
+
     }
 }
