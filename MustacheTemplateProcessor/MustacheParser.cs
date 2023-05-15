@@ -10,7 +10,7 @@ namespace MustacheTemplateProcessor
     {
         private readonly StatementHelper _statementHelper = new StatementHelper();
 
-        public string Parse(string expression, Dictionary<string, object> context)
+        public string Process(string expression, Dictionary<string, object> context)
         {
             var output = string.Empty;
             var innerExpression = expression;
@@ -34,6 +34,7 @@ namespace MustacheTemplateProcessor
                 output += innerExpression.Substring(0, startStatement.StartIndex);
                 var type = _statementHelper.GetStatementType(startStatement);
 
+                // ToDo: записывать в endStatement то же значение и для SimpleValue
                 if (type == StatementType.For || type == StatementType.If)
                 {
                     endStatement = _statementHelper.GetEndStatement(innerExpression, startStatement);

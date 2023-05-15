@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 
 namespace MustacheTemplateProcessor.StatementParsers
@@ -16,8 +17,8 @@ namespace MustacheTemplateProcessor.StatementParsers
                 string.IsNullOrEmpty(statementContext.Body))
                 return string.Empty;
 
-            if (statementContext.StartStatement.Statement.IndexOf("{{", StringComparison.InvariantCulture) == -1 ||
-                statementContext.StartStatement.Statement.IndexOf("}}", StringComparison.InvariantCulture) == -1)
+            if (statementContext.StartStatement.Statement.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture) == -1 ||
+                statementContext.StartStatement.Statement.IndexOf(Statements.EndSymbol, StringComparison.InvariantCulture) == -1)
                 return statementContext.StartStatement.Statement;
 
             var collectionName = GetCollectionName(statementContext.StartStatement);
@@ -63,7 +64,7 @@ namespace MustacheTemplateProcessor.StatementParsers
                 innerContext[itemName] = item;
                 try
                 {
-                    var val = _parser.Parse(statementContext.Body, innerContext);
+                    var val = _parser.Process(statementContext.Body, innerContext);
                     output += val;
                 }
                 catch (Exception)

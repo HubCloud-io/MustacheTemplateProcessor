@@ -24,7 +24,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, emptyContext);
+            var output = parser.Process(expression, emptyContext);
 
             // Assert
             Assert.That(output, Is.EqualTo(expression));
@@ -54,7 +54,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -84,7 +84,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -124,7 +124,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -164,7 +164,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -237,7 +237,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -286,7 +286,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -314,7 +314,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -352,7 +352,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -389,7 +389,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -420,7 +420,7 @@ namespace MustacheTemplateProcessor.Tests
             var parser = GetParser();
 
             // Act
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             // Assert
             Assert.That(output, Is.EqualTo(reference));
@@ -493,7 +493,7 @@ namespace MustacheTemplateProcessor.Tests
             };
 
             var parser = GetParser();
-            var output = parser.Parse(expression, context);
+            var output = parser.Process(expression, context);
 
             Assert.That(output, Is.EqualTo(reference));
         }

@@ -13,10 +13,10 @@ namespace MustacheTemplateProcessor
             if (string.IsNullOrEmpty(statement?.Statement))
                 return StatementType.Undefined;
 
-            if (statement.Statement.IndexOf("for", StringComparison.InvariantCulture) != -1)
+            if (statement.Statement.IndexOf(Statements.For, StringComparison.InvariantCulture) != -1)
                 return StatementType.For;
 
-            if (statement.Statement.IndexOf("if", StringComparison.InvariantCulture) != -1)
+            if (statement.Statement.IndexOf(Statements.If, StringComparison.InvariantCulture) != -1)
                 return StatementType.If;
 
             return StatementType.Value;
@@ -24,11 +24,11 @@ namespace MustacheTemplateProcessor
 
         public ParsedStatement GetStartStatement(string expression)
         {
-            var statementStart = expression.IndexOf("{{", StringComparison.InvariantCulture);
+            var statementStart = expression.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture);
             if (statementStart == -1)
                 throw new NoStatementException();
 
-            var statementEnd = expression.IndexOf("}}", StringComparison.InvariantCulture);
+            var statementEnd = expression.IndexOf(Statements.EndSymbol, StringComparison.InvariantCulture);
             if (statementEnd == -1)
                 throw new StatementParseException();
 

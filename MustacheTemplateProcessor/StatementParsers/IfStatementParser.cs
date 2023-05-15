@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EvalEngine.Engine;
+using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 
 namespace MustacheTemplateProcessor.StatementParsers
@@ -17,12 +18,12 @@ namespace MustacheTemplateProcessor.StatementParsers
                 string.IsNullOrEmpty(statementContext.Body))
                 return string.Empty;
 
-            if (statementContext.StartStatement.Statement.IndexOf("{{", StringComparison.InvariantCulture) == -1 ||
-                statementContext.StartStatement.Statement.IndexOf("}}", StringComparison.InvariantCulture) == -1)
+            if (statementContext.StartStatement.Statement.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture) == -1 ||
+                statementContext.StartStatement.Statement.IndexOf(Statements.EndSymbol, StringComparison.InvariantCulture) == -1)
                 return statementContext.StartStatement.Statement;
 
             var expression = statementContext.StartStatement.PureStatement
-                .Replace("if", "")
+                .Replace(Statements.If, "")
                 .Trim();
 
             var evaluator = new FormulaEvaluator(new Dictionary<string, object>(context));
@@ -32,7 +33,7 @@ namespace MustacheTemplateProcessor.StatementParsers
                 if (!state)
                     return string.Empty;
 
-                var val = _parser.Parse(statementContext.Body, new Dictionary<string, object>(context));
+                var val = _parser.Process(statementContext.Body, new Dictionary<string, object>(context));
                 return val;
             }
             catch (Exception)

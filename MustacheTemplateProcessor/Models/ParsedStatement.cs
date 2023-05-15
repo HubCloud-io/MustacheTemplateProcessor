@@ -1,3 +1,5 @@
+using MustacheTemplateProcessor.Common;
+
 namespace MustacheTemplateProcessor.Models
 {
     public class ParsedStatement
@@ -8,7 +10,10 @@ namespace MustacheTemplateProcessor.Models
 
         public string PureStatement => Statement
             ?.Trim()
-            .Replace("{{", "")
-            .Replace("}}", "");
+            .Replace(Statements.StartSymbol, "")
+            .Replace(Statements.EndSymbol, "");
+
+        public override string ToString()
+            => $"Statement = {Statement}, StartIndex = {StartIndex}, EndIndex = {EndIndex}";
     }
 }

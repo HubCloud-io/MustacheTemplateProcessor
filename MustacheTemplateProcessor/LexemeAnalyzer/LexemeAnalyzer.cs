@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MustacheTemplateProcessor.Common;
 
 namespace MustacheTemplateProcessor.LexemeAnalyzer
 {
@@ -76,16 +77,16 @@ namespace MustacheTemplateProcessor.LexemeAnalyzer
 
         private LexemeType GetType(string value)
         {
-            if (value.IndexOf("{{", StringComparison.InvariantCulture) == -1)
+            if (value.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture) == -1)
                 return LexemeType.PlainText;
 
-            if (value.IndexOf("for", StringComparison.InvariantCulture) != -1)
+            if (value.IndexOf(Statements.For, StringComparison.InvariantCulture) != -1)
                 return LexemeType.ForStatement;
 
-            if (value.IndexOf("if", StringComparison.InvariantCulture) != -1)
+            if (value.IndexOf(Statements.If, StringComparison.InvariantCulture) != -1)
                 return LexemeType.IfStatement;
 
-            if (value.IndexOf("end", StringComparison.InvariantCulture) != -1)
+            if (value.IndexOf(Statements.End, StringComparison.InvariantCulture) != -1)
                 return LexemeType.EndStatement;
 
             return LexemeType.ValueStatement;

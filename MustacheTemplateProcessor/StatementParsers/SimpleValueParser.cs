@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EvalEngine.Engine;
+using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 
 namespace MustacheTemplateProcessor.StatementParsers
@@ -9,12 +10,14 @@ namespace MustacheTemplateProcessor.StatementParsers
     {
         public string Process(StatementContext statementContext)
         {
+            // ToDo: вынести проверку в базовый класс
             var context = statementContext.Context;
             if (context is null || string.IsNullOrEmpty(statementContext.StartStatement?.Statement))
                 return string.Empty;
 
-            if (statementContext.StartStatement.Statement.IndexOf("{{", StringComparison.InvariantCulture) == -1 ||
-                statementContext.StartStatement.Statement.IndexOf("}}", StringComparison.InvariantCulture) == -1)
+            // ToDo: вынести проверку в базовый класс
+            if (statementContext.StartStatement.Statement.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture) == -1 ||
+                statementContext.StartStatement.Statement.IndexOf(Statements.EndSymbol, StringComparison.InvariantCulture) == -1)
                 return statementContext.StartStatement.Statement;
 
             var expression = statementContext.StartStatement.PureStatement.Trim();
