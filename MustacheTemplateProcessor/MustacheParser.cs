@@ -3,6 +3,7 @@ using System.Linq;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 using MustacheTemplateProcessor.StatementParsers;
+using MustacheTemplateProcessor.StatementParsers.Base;
 
 namespace MustacheTemplateProcessor
 {

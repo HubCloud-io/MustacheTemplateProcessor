@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
+using MustacheTemplateProcessor.StatementParsers.Base;
 
 namespace MustacheTemplateProcessor.StatementParsers
 {
-    public class ForStatementParser : IStatementParser
+    public class ForStatementParser : BaseStatementParser, IStatementParser
     {
         private readonly MustacheParser _parser = new MustacheParser();
 
         public string Process(StatementContext statementContext)
         {
-            var context = statementContext.Context;
-            if (context is null || string.IsNullOrEmpty(statementContext.StartStatement?.Statement) ||
-                string.IsNullOrEmpty(statementContext.Body))
+            if (!IsValidStatementContext(statementContext) || string.IsNullOrEmpty(statementContext.Body))
                 return string.Empty;
 
-            if (statementContext.StartStatement.Statement.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture) == -1 ||
-                statementContext.StartStatement.Statement.IndexOf(Statements.EndSymbol, StringComparison.InvariantCulture) == -1)
+            if (!IsValidStartStatement(statementContext))
                 return statementContext.StartStatement.Statement;
-
+            
+            var context = statementContext.Context;
             var collectionName = GetCollectionName(statementContext.StartStatement);
             if (collectionName is null)
                 return string.Empty;

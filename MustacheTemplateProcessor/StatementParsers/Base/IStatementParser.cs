@@ -1,6 +1,6 @@
 ﻿using MustacheTemplateProcessor.Models;
 
-namespace MustacheTemplateProcessor.StatementParsers
+namespace MustacheTemplateProcessor.StatementParsers.Base
 {
     public interface IStatementParser
     {

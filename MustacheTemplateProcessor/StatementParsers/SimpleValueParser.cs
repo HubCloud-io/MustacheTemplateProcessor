@@ -3,28 +3,25 @@ using System.Collections.Generic;
 using EvalEngine.Engine;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
+using MustacheTemplateProcessor.StatementParsers.Base;
 
 namespace MustacheTemplateProcessor.StatementParsers
 {
-    public class SimpleValueParser : IStatementParser
+    public class SimpleValueParser : BaseStatementParser, IStatementParser
     {
         public string Process(StatementContext statementContext)
         {
-            // ToDo: вынести проверку в базовый класс
-            var context = statementContext.Context;
-            if (context is null || string.IsNullOrEmpty(statementContext.StartStatement?.Statement))
+            if (!IsValidStatementContext(statementContext))
                 return string.Empty;
-
-            // ToDo: вынести проверку в базовый класс
-            if (statementContext.StartStatement.Statement.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture) == -1 ||
-                statementContext.StartStatement.Statement.IndexOf(Statements.EndSymbol, StringComparison.InvariantCulture) == -1)
+            
+            if (!IsValidStartStatement(statementContext))
                 return statementContext.StartStatement.Statement;
 
             var expression = statementContext.StartStatement.PureStatement.Trim();
 
             try
             {
-                var evaluator = new FormulaEvaluator(new Dictionary<string, object>(context));
+                var evaluator = new FormulaEvaluator(new Dictionary<string, object>(statementContext.Context));
                 var result = evaluator.Eval(expression);
                 return result?.ToString();
             }
