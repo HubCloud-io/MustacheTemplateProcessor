@@ -10,6 +10,9 @@ namespace MustacheTemplateProcessor
     {
         private readonly StatementHelper _statementHelper = new StatementHelper();
 
+        public static bool TemplateContainsExpressions(string template)
+            => template?.Contains(Statements.StartSymbol) ?? false;
+
         public string Process(string expression, Dictionary<string, object> context)
         {
             var output = string.Empty;
