@@ -10,9 +10,9 @@ namespace MustacheTemplateProcessor.Models
         public int EndIndex { get; set; }
 
         public string PureStatement => Statement
-            ?.Trim()
-            .Replace(Statements.StartSymbol, "")
-            .Replace(Statements.EndSymbol, "");
+            ?.Replace(Statements.StartSymbol, "")
+            .Replace(Statements.EndSymbol, "")
+            .Trim();
 
         public override string ToString()
             => $"Statement = {Statement}, StartIndex = {StartIndex}, EndIndex = {EndIndex}";

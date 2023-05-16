@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MustacheTemplateProcessor.Common;
@@ -18,7 +19,7 @@ namespace MustacheTemplateProcessor.StatementParsers
 
             if (!IsValidStartStatement(statementContext))
                 return statementContext.StartStatement.Statement;
-            
+
             var context = statementContext.Context;
             var collectionName = GetCollectionName(statementContext.StartStatement);
             if (collectionName is null)
@@ -31,10 +32,24 @@ namespace MustacheTemplateProcessor.StatementParsers
             IEnumerable<dynamic> items;
             if (!collectionName.Contains("."))
             {
-                if (!context.TryGetValue(collectionName, out var collection) || !(collection is IEnumerable<dynamic>))
+                if (!context.TryGetValue(collectionName, out var collection))
                     return string.Empty;
-                else
+
+                if (collection is IEnumerable<dynamic>)
                     items = collection as IEnumerable<dynamic>;
+                else
+                {
+                    if (!(collection is ICollection cl))
+                        return string.Empty;
+
+                    var tmp = new List<dynamic>();
+                    foreach (var item in cl)
+                    {
+                        tmp.Add(item);
+                    }
+
+                    items = tmp.Select(x => x);
+                }
             }
             else
             {

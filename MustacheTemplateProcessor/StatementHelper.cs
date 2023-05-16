@@ -18,6 +18,9 @@ namespace MustacheTemplateProcessor
 
             if (statement.IndexOf(Statements.If, StringComparison.InvariantCulture) != -1)
                 return StatementType.If;
+            
+            if (statement.IndexOf(Statements.End, StringComparison.InvariantCulture) != -1)
+                return StatementType.End;
 
             return StatementType.Value;
         }
@@ -32,14 +35,27 @@ namespace MustacheTemplateProcessor
             if (statementEnd == -1)
                 throw new StatementParseException();
 
-            var statement = expression.Substring(statementStart, statementEnd + 2 - statementStart);
+            statementEnd += 1;
+            var statement = expression.Substring(statementStart, statementEnd + 1 - statementStart);
+            var statementType = GetStatementType(statement);
+            
+            if ((statementType == StatementType.If || statementType == StatementType.For) && expression.Length > statementEnd + 1)
+            {
+                do
+                {
+                    if (expression[statementEnd + 1] == '\r' || expression[statementEnd + 1] == '\n')
+                        statementEnd++;
+                    if (expression.Length <= statementEnd + 1)
+                        break;
+                } while (expression[statementEnd + 1] == '\r' || expression[statementEnd + 1] == '\n');
+            }
 
             return new ParsedStatement
             {
                 Statement = statement,
                 StartIndex = statementStart,
-                EndIndex = statementEnd + 1,
-                Type = GetStatementType(statement)
+                EndIndex = statementEnd,
+                Type = statementType
             };
         }
 
@@ -70,12 +86,30 @@ namespace MustacheTemplateProcessor
                     balance++;
 
                 if (lexeme.Type == LexemeType.EndStatement && balance == 0)
-                    return new ParsedStatement
+                {
+                    var statementType = GetStatementType(lexeme.Value);
+                    var statementEnd = lexeme.EndIndex;
+                    if (statementType == StatementType.End && expression.Length > statementEnd + 1)
+                    {
+                        do
+                        {
+                            if (expression[statementEnd + 1] == '\r' || expression[statementEnd + 1] == '\n')
+                                statementEnd++;
+                            if (expression.Length <= statementEnd + 1)
+                                break;
+                        } while (expression[statementEnd + 1] == '\r' || expression[statementEnd + 1] == '\n');
+                    }
+                    
+                    var parsedStatement = new ParsedStatement
                     {
                         Statement = lexeme.Value,
                         StartIndex = lexeme.StartIndex,
-                        EndIndex = lexeme.EndIndex
+                        EndIndex = statementEnd,
+                        Type = statementType
                     };
+
+                    return parsedStatement;
+                }
 
                 if (lexeme.Type == LexemeType.EndStatement && balance != 0)
                     balance--;

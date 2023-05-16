@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace MustacheTemplateProcessor.Tests
 {
+    [TestFixture]
     public class StatementHelperTests
     {
         [Test]

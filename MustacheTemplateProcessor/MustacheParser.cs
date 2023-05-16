@@ -99,10 +99,25 @@ namespace MustacheTemplateProcessor
         {
             if (startStatement.Type == StatementType.If ||
                 startStatement.Type == StatementType.For)
-                return expression.Substring(startStatement.EndIndex + 1,
-                    endStatement.StartIndex - startStatement.EndIndex - 1);
+                expression = expression.Substring(startStatement.EndIndex + 1, endStatement.StartIndex - startStatement.EndIndex - 1);
 
-            return null;
+            // return TrimStartNewLineSymbols(expression);
+            return expression;
+        }
+
+        private string TrimStartNewLineSymbols(string expression)
+        {
+            do
+            {
+                if (expression[0] == '\r' || expression[0] == '\n')
+                    expression = expression.Substring(1, expression.Length - 1);
+                    
+                if (string.IsNullOrEmpty(expression))
+                    break;
+
+            } while (expression[0] == '\r' || expression[0] == '\n');
+            
+            return expression;
         }
     }
 }

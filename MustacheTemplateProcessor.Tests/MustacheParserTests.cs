@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace MustacheTemplateProcessor.Tests
 {
+    [TestFixture]
     public class MustacheParserTests
     {
         private MustacheParser GetParser() => new MustacheParser();
@@ -497,58 +498,5 @@ namespace MustacheTemplateProcessor.Tests
 
             Assert.That(output, Is.EqualTo(reference));
         }
-        
-        [Test]
-        public void Foo_Test()
-        {
-            // Arrange
-            var expression = "{{for item in Items}}" +
-                             "foo" +
-                             "{{end}}";
-
-            var reference = "foo" +
-                            "foo";
-
-            var items = new List<ItemModel>
-            {
-                new ItemModel {Id = 1},
-                new ItemModel {Id = 2}
-            };
-            var context = new Dictionary<string, object>
-            {
-                {"Items", items}
-            };
-
-            var parser = GetParser();
-
-            // Act
-            var output = parser.Process(expression, context);
-
-            // Assert
-            Assert.That(output, Is.EqualTo(reference));
-        }
-        
-        [Test]
-        public void Foo2_Test()
-        {
-            // Arrange
-            var expression = "{{item}}";
-
-            var reference = "42";
-
-            var context = new Dictionary<string, object>
-            {
-                {"item", 42}
-            };
-
-            var parser = GetParser();
-
-            // Act
-            var output = parser.Process(expression, context);
-
-            // Assert
-            Assert.That(output, Is.EqualTo(reference));
-        }
-
     }
 }

@@ -21,7 +21,7 @@ namespace MustacheTemplateProcessor.StatementParsers
                 return statementContext.StartStatement.Statement;
 
             var expression = statementContext.StartStatement.PureStatement
-                .Replace(Statements.If, "")
+                .Replace(Statements.If + " ", "")
                 .Trim();
 
             var evaluator = new FormulaEvaluator(new Dictionary<string, object>(statementContext.Context));
