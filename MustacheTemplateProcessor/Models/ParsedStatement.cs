@@ -4,6 +4,7 @@ namespace MustacheTemplateProcessor.Models
 {
     public class ParsedStatement
     {
+        public StatementType Type { get; set; }
         public string Statement { get; set; }
         public int StartIndex { get; set; }
         public int EndIndex { get; set; }

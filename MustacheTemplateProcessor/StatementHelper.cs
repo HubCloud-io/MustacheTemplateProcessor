@@ -8,15 +8,15 @@ namespace MustacheTemplateProcessor
 {
     public class StatementHelper
     {
-        public StatementType GetStatementType(ParsedStatement statement)
+        private StatementType GetStatementType(string statement)
         {
-            if (string.IsNullOrEmpty(statement?.Statement))
+            if (string.IsNullOrEmpty(statement))
                 return StatementType.Undefined;
 
-            if (statement.Statement.IndexOf(Statements.For, StringComparison.InvariantCulture) != -1)
+            if (statement.IndexOf(Statements.For, StringComparison.InvariantCulture) != -1)
                 return StatementType.For;
 
-            if (statement.Statement.IndexOf(Statements.If, StringComparison.InvariantCulture) != -1)
+            if (statement.IndexOf(Statements.If, StringComparison.InvariantCulture) != -1)
                 return StatementType.If;
 
             return StatementType.Value;
@@ -38,12 +38,21 @@ namespace MustacheTemplateProcessor
             {
                 Statement = statement,
                 StartIndex = statementStart,
-                EndIndex = statementStart + statement.Length
+                EndIndex = statementEnd + 1,
+                Type = GetStatementType(statement)
             };
         }
 
         public ParsedStatement GetEndStatement(string expression, ParsedStatement startStatement)
         {
+            if (startStatement.Type == StatementType.Value)
+                return new ParsedStatement
+                {
+                    Statement = startStatement.Statement,
+                    StartIndex = startStatement.StartIndex,
+                    EndIndex = startStatement.EndIndex
+                };
+            
             var analyzer = new LexemeAnalyzer.LexemeAnalyzer();
             var lexemes = analyzer.GetLexemes(expression)
                 .Where(x => x.Type == LexemeType.ForStatement ||

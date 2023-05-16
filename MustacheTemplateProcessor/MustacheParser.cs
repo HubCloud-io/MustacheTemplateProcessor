@@ -15,76 +15,58 @@ namespace MustacheTemplateProcessor
         public static bool TemplateContainsExpressions(string template)
             => template?.Contains(Statements.StartSymbol) ?? false;
 
+        private string GetBody(string expression, ParsedStatement startStatement, ParsedStatement endStatement)
+        {
+            if (startStatement.Type == StatementType.If ||
+                startStatement.Type == StatementType.For)
+                return expression.Substring(startStatement.EndIndex + 1,
+                    endStatement.StartIndex - startStatement.EndIndex - 1);
+
+            return null;
+        }
+
         public string Process(string expression, Dictionary<string, object> context)
         {
             var output = string.Empty;
-            var innerExpression = expression;
 
             var currentIteration = 0;
             do
             {
                 ParsedStatement startStatement;
-                ParsedStatement endStatement = null;
-                StatementContext statementContext = null;
 
                 try
                 {
-                    startStatement = _statementHelper.GetStartStatement(innerExpression);
+                    startStatement = _statementHelper.GetStartStatement(expression);
                 }
                 catch (NoStatementException)
                 {
-                    output += innerExpression;
+                    output += expression;
                     break;
                 }
 
-                output += innerExpression.Substring(0, startStatement.StartIndex);
-                var type = _statementHelper.GetStatementType(startStatement);
-
-                // ToDo: записывать в endStatement то же значение и для SimpleValue
-                if (type == StatementType.For || type == StatementType.If)
+                output += expression.Substring(0, startStatement.StartIndex);
+                var endStatement = _statementHelper.GetEndStatement(expression, startStatement);
+                var statementContext = new StatementContext
                 {
-                    endStatement = _statementHelper.GetEndStatement(innerExpression, startStatement);
-                    if (endStatement != null)
-                    {
-                        statementContext = new StatementContext
-                        {
-                            StartStatement = startStatement,
-                            EndStatement = endStatement,
-                            Body = innerExpression.Substring(startStatement.EndIndex,
-                                endStatement.StartIndex - startStatement.EndIndex),
-                            Context = context
-                        };
-                    }
-                }
-                else
-                {
-                    statementContext = new StatementContext
-                    {
-                        StartStatement = startStatement,
-                        Context = context
-                    };
-                }
+                    StartStatement = startStatement,
+                    EndStatement = endStatement,
+                    Body = GetBody(expression, startStatement, endStatement),
+                    Context = context
+                };
 
-                if (statementContext != null)
-                    output += GetStatementValue(statementContext, type);
+                output += GetStatementValue(statementContext, startStatement.Type);
 
-                if ((type == StatementType.For || type == StatementType.If) && endStatement != null)
-                    innerExpression = innerExpression.Substring(endStatement.EndIndex + 1,
-                        innerExpression.Length - endStatement.EndIndex - 1);
-                else
-                    innerExpression = innerExpression.Substring(startStatement.EndIndex,
-                        innerExpression.Length - startStatement.EndIndex);
+                expression = expression.Substring(endStatement.EndIndex + 1, expression.Length - endStatement.EndIndex - 1);
 
                 currentIteration++;
-                
+
                 // Emergency exit
-                if (innerExpression.Any() && currentIteration > MaxIterationCount)
+                if (expression.Any() && currentIteration > MaxIterationCount)
                 {
-                    output += innerExpression;
+                    output += expression;
                     break;
                 }
-                    
-            } while (innerExpression.Any());
+            } while (expression.Any());
 
             return output;
         }
