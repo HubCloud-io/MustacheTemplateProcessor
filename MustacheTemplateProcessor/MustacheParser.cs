@@ -9,6 +9,7 @@ namespace MustacheTemplateProcessor
 {
     public class MustacheParser : IMustacheParser
     {
+        private const int MaxIterationCount = 1000;
         private readonly StatementHelper _statementHelper = new StatementHelper();
 
         public static bool TemplateContainsExpressions(string template)
@@ -19,6 +20,7 @@ namespace MustacheTemplateProcessor
             var output = string.Empty;
             var innerExpression = expression;
 
+            var currentIteration = 0;
             do
             {
                 ParsedStatement startStatement;
@@ -66,16 +68,23 @@ namespace MustacheTemplateProcessor
                 if (statementContext != null)
                     output += GetStatementValue(statementContext, type);
 
-                if (type == StatementType.For || type == StatementType.If)
+                if ((type == StatementType.For || type == StatementType.If) && endStatement != null)
                     innerExpression = innerExpression.Substring(endStatement.EndIndex + 1,
                         innerExpression.Length - endStatement.EndIndex - 1);
                 else
                     innerExpression = innerExpression.Substring(startStatement.EndIndex,
                         innerExpression.Length - startStatement.EndIndex);
 
-                if (!innerExpression.Any())
+                currentIteration++;
+                
+                // Emergency exit
+                if (innerExpression.Any() && currentIteration > MaxIterationCount)
+                {
+                    output += innerExpression;
                     break;
-            } while (true);
+                }
+                    
+            } while (innerExpression.Any());
 
             return output;
         }
