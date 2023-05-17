@@ -106,8 +106,23 @@ namespace MustacheTemplateProcessor.StatementParsers
             return new IfStatementBodies
             {
                 TrueStateBody = body.Substring(0, currentElse.StartIndex),
-                FalseStateBody = body.Substring(currentElse.EndIndex + 1, body.Length - currentElse.EndIndex - 1)
+                FalseStateBody = Foo(body, currentElse)
             };
+        }
+
+        private string Foo(string expression, Lexeme currentElse)
+        {
+            var statementEnd = currentElse.EndIndex;
+            
+            do
+            {
+                if (expression[statementEnd + 1] == '\r' || expression[statementEnd + 1] == '\n')
+                    statementEnd++;
+                if (expression.Length <= statementEnd + 1)
+                    break;
+            } while (expression[statementEnd + 1] == '\r' || expression[statementEnd + 1] == '\n');
+
+            return expression.Substring(statementEnd + 1, expression.Length - statementEnd - 1);
         }
     }
 }

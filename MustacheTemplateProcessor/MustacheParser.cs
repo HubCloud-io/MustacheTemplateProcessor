@@ -101,7 +101,6 @@ namespace MustacheTemplateProcessor
                 startStatement.Type == StatementType.For)
                 expression = expression.Substring(startStatement.EndIndex + 1, endStatement.StartIndex - startStatement.EndIndex - 1);
 
-            // return TrimStartNewLineSymbols(expression);
             return expression;
         }
 
