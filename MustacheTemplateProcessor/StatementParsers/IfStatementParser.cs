@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using EvalEngine.Engine;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
@@ -7,6 +8,11 @@ using MustacheTemplateProcessor.StatementParsers.Base;
 
 namespace MustacheTemplateProcessor.StatementParsers
 {
+    public class IfStatementBodies
+    {
+        public string TrueStateBody { get; set; }
+        public string FalseStateBody { get; set; }
+    }
 
     public class IfStatementParser : BaseStatementParser, IStatementParser
     {
@@ -20,24 +26,49 @@ namespace MustacheTemplateProcessor.StatementParsers
             if (!IsValidStartStatement(statementContext))
                 return statementContext.StartStatement.Statement;
 
-            var expression = statementContext.StartStatement.PureStatement
+            var condition = statementContext.StartStatement.PureStatement
                 .Replace(Statements.If + " ", "")
                 .Trim();
 
+            var bodies = GetBodies(statementContext.Body);
             var evaluator = new FormulaEvaluator(new Dictionary<string, object>(statementContext.Context));
             try
             {
-                var state = evaluator.Eval<bool>(expression);
-                if (!state)
-                    return string.Empty;
+                string value;
+                var state = evaluator.Eval<bool>(condition);
+                if (state)
+                    value = _parser.Process(bodies.TrueStateBody,
+                        new Dictionary<string, object>(statementContext.Context));
+                else
+                    value = _parser.Process(bodies.FalseStateBody,
+                        new Dictionary<string, object>(statementContext.Context));
 
-                var val = _parser.Process(statementContext.Body, new Dictionary<string, object>(statementContext.Context));
-                return val;
+                return value;
             }
             catch (Exception)
             {
                 return string.Empty;
             }
+        }
+
+        public IfStatementBodies GetBodies(string body)
+        {
+            var fullElseStatement = "{{" + Statements.Else + "}}";
+            
+            var elseStartIndex = body.IndexOf(fullElseStatement, StringComparison.InvariantCultureIgnoreCase);
+            if (elseStartIndex == -1)
+                return new IfStatementBodies
+                {
+                    TrueStateBody = body,
+                    FalseStateBody = string.Empty
+                };
+
+            var endIndex = elseStartIndex + fullElseStatement.Length;
+            return new IfStatementBodies
+            {
+                TrueStateBody = body.Substring(0, elseStartIndex),
+                FalseStateBody = body.Substring(endIndex, body.Length - endIndex)
+            };
         }
     }
 }

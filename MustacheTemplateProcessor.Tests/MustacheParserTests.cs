@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MustacheTemplateProcessor.StatementParsers;
 using MustacheTemplateProcessor.Tests.Models;
 using NUnit.Framework;
 
@@ -310,6 +311,33 @@ namespace MustacheTemplateProcessor.Tests
             var context = new Dictionary<string, object>
             {
                 {"state", 1}
+            };
+
+            var parser = GetParser();
+
+            // Act
+            var output = parser.Process(expression, context);
+
+            // Assert
+            Assert.That(output, Is.EqualTo(reference));
+        }
+
+        [TestCase(1, "<head><span>State = 1</span></head>")]
+        [TestCase(2, "<head><span>State <> 1</span></head>")]
+        public void IfElseStatement_Test(int value, string reference)
+        {
+            // Arrange
+            var expression = "<head>" +
+                             "{{if state == 1}}" +
+                             "<span>State = 1</span>" +
+                             "{{else}}" +
+                             "<span>State <> 1</span>" +
+                             "{{end}}" +
+                             "</head>";
+
+            var context = new Dictionary<string, object>
+            {
+                {"state", value}
             };
 
             var parser = GetParser();
