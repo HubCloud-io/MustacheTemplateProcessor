@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EvalEngine.Engine;
 using MustacheTemplateProcessor.Common;
+using MustacheTemplateProcessor.LexemeAnalyzer;
 using MustacheTemplateProcessor.Models;
 using MustacheTemplateProcessor.StatementParsers.Base;
 
@@ -51,23 +52,61 @@ namespace MustacheTemplateProcessor.StatementParsers
             }
         }
 
-        public IfStatementBodies GetBodies(string body)
+        private IfStatementBodies GetBodies(string body)
         {
-            var fullElseStatement = "{{" + Statements.Else + "}}";
-            
-            var elseStartIndex = body.IndexOf(fullElseStatement, StringComparison.InvariantCultureIgnoreCase);
-            if (elseStartIndex == -1)
+            var lexemeAnalyzer = new LexemeAnalyzer.LexemeAnalyzer();
+            var lexemes = lexemeAnalyzer.GetLexemes(body)
+                ?.ToList();
+
+            if (lexemes is null || !lexemes.Any(x => x.Type == LexemeType.ElseStatement))
                 return new IfStatementBodies
                 {
                     TrueStateBody = body,
                     FalseStateBody = string.Empty
                 };
 
-            var endIndex = elseStartIndex + fullElseStatement.Length;
+            var stack = new Stack<Lexeme>();
+            var filteredLexemes = lexemes.Where(x => x.Type != LexemeType.PlainText &&
+                                                     x.Type != LexemeType.ValueStatement);
+            
+            foreach (var lexeme in filteredLexemes)
+            {
+                switch (lexeme.Type)
+                {
+                    case LexemeType.IfStatement:
+                    case LexemeType.ForStatement:
+                        stack.Push(lexeme);
+                        break;
+                    case LexemeType.ElseStatement:
+                        stack.Push(lexeme);
+                        break;
+                    case LexemeType.EndStatement:
+                        var top = stack.Pop();
+                        if (top.Type == LexemeType.ElseStatement)
+                            stack.Pop();
+                        break;
+                }
+            }
+
+            if (stack.Count != 1)
+                return new IfStatementBodies
+                {
+                    TrueStateBody = body,
+                    FalseStateBody = string.Empty
+                };
+
+            var currentElse = stack.Pop();
+            if (currentElse.Type != LexemeType.ElseStatement)
+                return new IfStatementBodies
+                {
+                    TrueStateBody = body,
+                    FalseStateBody = string.Empty
+                };
+
             return new IfStatementBodies
             {
-                TrueStateBody = body.Substring(0, elseStartIndex),
-                FalseStateBody = body.Substring(endIndex, body.Length - endIndex)
+                TrueStateBody = body.Substring(0, currentElse.StartIndex),
+                FalseStateBody = body.Substring(currentElse.EndIndex + 1, body.Length - currentElse.EndIndex - 1)
             };
         }
     }

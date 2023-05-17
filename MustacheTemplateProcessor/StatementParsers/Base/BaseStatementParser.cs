@@ -15,8 +15,8 @@ namespace MustacheTemplateProcessor.StatementParsers.Base
 
         protected bool IsValidStartStatement(StatementContext statementContext)
         {
-            if (statementContext.StartStatement.Statement.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture) == -1 ||
-                statementContext.StartStatement.Statement.IndexOf(Statements.EndSymbol, StringComparison.InvariantCulture) == -1)
+            if (statementContext.StartStatement.Statement.IndexOf(Statements.StartSymbol, StringComparison.InvariantCultureIgnoreCase) == -1 ||
+                statementContext.StartStatement.Statement.IndexOf(Statements.EndSymbol, StringComparison.InvariantCultureIgnoreCase) == -1)
                 return false;
             return true;
         }

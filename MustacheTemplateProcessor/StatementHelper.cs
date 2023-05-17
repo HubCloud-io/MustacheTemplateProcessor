@@ -13,13 +13,13 @@ namespace MustacheTemplateProcessor
             if (string.IsNullOrEmpty(statement))
                 return StatementType.Undefined;
 
-            if (statement.IndexOf(Statements.For, StringComparison.InvariantCulture) != -1)
+            if (statement.IndexOf(Statements.For, StringComparison.InvariantCultureIgnoreCase) != -1)
                 return StatementType.For;
 
-            if (statement.IndexOf(Statements.If, StringComparison.InvariantCulture) != -1)
+            if (statement.IndexOf(Statements.If, StringComparison.InvariantCultureIgnoreCase) != -1)
                 return StatementType.If;
             
-            if (statement.IndexOf(Statements.End, StringComparison.InvariantCulture) != -1)
+            if (statement.IndexOf(Statements.End, StringComparison.InvariantCultureIgnoreCase) != -1)
                 return StatementType.End;
 
             return StatementType.Value;
@@ -27,11 +27,11 @@ namespace MustacheTemplateProcessor
 
         public ParsedStatement GetStartStatement(string expression)
         {
-            var statementStart = expression.IndexOf(Statements.StartSymbol, StringComparison.InvariantCulture);
+            var statementStart = expression.IndexOf(Statements.StartSymbol, StringComparison.InvariantCultureIgnoreCase);
             if (statementStart == -1)
                 throw new NoStatementException();
 
-            var statementEnd = expression.IndexOf(Statements.EndSymbol, StringComparison.InvariantCulture);
+            var statementEnd = expression.IndexOf(Statements.EndSymbol, StringComparison.InvariantCultureIgnoreCase);
             if (statementEnd == -1)
                 throw new StatementParseException();
 
