@@ -12,12 +12,10 @@ namespace MustacheTemplateProcessor
     public class MustacheParser : IMustacheParser
     {
         private readonly IEvaluator _evaluator;
-        private readonly StatementHelper _statementHelper;
 
-        public MustacheParser(IEvaluator evaluator, StatementHelper statementHelper)
+        public MustacheParser(IEvaluator evaluator)
         {
             _evaluator = evaluator;
-            _statementHelper = statementHelper;
         }
         
         public static bool TemplateContainsExpressions(string template)
@@ -37,7 +35,7 @@ namespace MustacheTemplateProcessor
                 ParsedStatement startStatement;
                 try
                 {
-                    startStatement = _statementHelper.GetStartStatement(expression);
+                    startStatement = StatementHelper.GetStartStatement(expression);
                     logger?.LogInformation($"StartStatement = {startStatement}");
                 }
                 catch (NoStatementException)
@@ -48,7 +46,7 @@ namespace MustacheTemplateProcessor
                 }
 
                 output += expression.Substring(0, startStatement.StartIndex);
-                var endStatement = _statementHelper.GetEndStatement(expression, startStatement);
+                var endStatement = StatementHelper.GetEndStatement(expression, startStatement);
                 logger?.LogInformation($"EndStatement = {endStatement}");
                 var statementContext = new StatementContext
                 {
@@ -87,10 +85,10 @@ namespace MustacheTemplateProcessor
             switch (type)
             {
                 case StatementType.If:
-                    parser = new IfStatementParser(_evaluator, _statementHelper);
+                    parser = new IfStatementParser(_evaluator);
                     break;
                 case StatementType.For:
-                    parser = new ForStatementParser(_evaluator, _statementHelper);
+                    parser = new ForStatementParser(_evaluator);
                     break;
                 case StatementType.Value:
                     parser = new SimpleValueParser(_evaluator);

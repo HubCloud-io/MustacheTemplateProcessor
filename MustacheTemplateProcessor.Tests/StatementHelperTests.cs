@@ -31,8 +31,7 @@ namespace MustacheTemplateProcessor.Tests
                            "{{for item in FirstItems}}".Length
             };
 
-            var helper = new StatementHelper();
-            var endStatement = helper.GetEndStatement(expression, startStatement);
+            var endStatement = StatementHelper.GetEndStatement(expression, startStatement);
 
             Assert.That(endStatement, Is.Not.Null);
             Assert.That(endStatement.StartIndex, Is.EqualTo(182));

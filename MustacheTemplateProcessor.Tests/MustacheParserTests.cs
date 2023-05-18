@@ -9,7 +9,7 @@ namespace MustacheTemplateProcessor.Tests
     [TestFixture]
     public class MustacheParserTests
     {
-        private MustacheParser GetParser() => new MustacheParser(new EvaluatorMock(), new StatementHelper());
+        private MustacheParser GetParser() => new MustacheParser(new EvaluatorMock());
 
         [Test]
         public void PlainText_Test()

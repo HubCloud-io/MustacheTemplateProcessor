@@ -10,7 +10,7 @@ namespace MustacheTemplateProcessor.Tests.StatementParsersTests
     {
         private IfStatementBodies GetBodies(string expression)
         {
-            var parser = new IfStatementParser(new EvaluatorMock(), new StatementHelper());
+            var parser = new IfStatementParser(new EvaluatorMock());
             var methodInfo = typeof(IfStatementParser).GetMethod("GetBodies", BindingFlags.NonPublic | BindingFlags.Instance);
             object[] parameters = {expression};
             

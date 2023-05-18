@@ -8,24 +8,7 @@ namespace MustacheTemplateProcessor
 {
     public class StatementHelper
     {
-        private StatementType GetStatementType(string statement)
-        {
-            if (string.IsNullOrEmpty(statement))
-                return StatementType.Undefined;
-
-            if (statement.IndexOf(Statements.For, StringComparison.InvariantCultureIgnoreCase) != -1)
-                return StatementType.For;
-
-            if (statement.IndexOf(Statements.If, StringComparison.InvariantCultureIgnoreCase) != -1)
-                return StatementType.If;
-            
-            if (statement.IndexOf(Statements.End, StringComparison.InvariantCultureIgnoreCase) != -1)
-                return StatementType.End;
-
-            return StatementType.Value;
-        }
-
-        public ParsedStatement GetStartStatement(string expression)
+        public static ParsedStatement GetStartStatement(string expression)
         {
             var statementStart = expression.IndexOf(Statements.StartSymbol, StringComparison.InvariantCultureIgnoreCase);
             if (statementStart == -1)
@@ -59,7 +42,7 @@ namespace MustacheTemplateProcessor
             };
         }
 
-        public ParsedStatement GetEndStatement(string expression, ParsedStatement startStatement)
+        public static ParsedStatement GetEndStatement(string expression, ParsedStatement startStatement)
         {
             if (startStatement.Type == StatementType.Value)
                 return new ParsedStatement
@@ -116,6 +99,23 @@ namespace MustacheTemplateProcessor
             }
 
             return null;
+        }
+        
+        private static StatementType GetStatementType(string statement)
+        {
+            if (string.IsNullOrEmpty(statement))
+                return StatementType.Undefined;
+
+            if (statement.IndexOf(Statements.For, StringComparison.InvariantCultureIgnoreCase) != -1)
+                return StatementType.For;
+
+            if (statement.IndexOf(Statements.If, StringComparison.InvariantCultureIgnoreCase) != -1)
+                return StatementType.If;
+            
+            if (statement.IndexOf(Statements.End, StringComparison.InvariantCultureIgnoreCase) != -1)
+                return StatementType.End;
+
+            return StatementType.Value;
         }
     }
 }
