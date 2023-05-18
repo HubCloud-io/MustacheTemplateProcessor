@@ -16,9 +16,9 @@ namespace MustacheTemplateProcessor.StatementParsers
     {
         private readonly MustacheParser _parser;
 
-        public ForStatementParser(IEvaluator evaluator) : base(evaluator)
+        public ForStatementParser(IEvaluator evaluator, StatementHelper statementHelper) : base(evaluator)
         {
-            _parser = new MustacheParser(evaluator);
+            _parser = new MustacheParser(evaluator, statementHelper);
         }
         
         public string Process(StatementContext statementContext)

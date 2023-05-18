@@ -12,11 +12,12 @@ namespace MustacheTemplateProcessor
     public class MustacheParser : IMustacheParser
     {
         private readonly IEvaluator _evaluator;
-        private readonly StatementHelper _statementHelper = new StatementHelper();
+        private readonly StatementHelper _statementHelper;
 
-        public MustacheParser(IEvaluator evaluator)
+        public MustacheParser(IEvaluator evaluator, StatementHelper statementHelper)
         {
             _evaluator = evaluator;
+            _statementHelper = statementHelper;
         }
         
         public static bool TemplateContainsExpressions(string template)
@@ -86,10 +87,10 @@ namespace MustacheTemplateProcessor
             switch (type)
             {
                 case StatementType.If:
-                    parser = new IfStatementParser(_evaluator);
+                    parser = new IfStatementParser(_evaluator, _statementHelper);
                     break;
                 case StatementType.For:
-                    parser = new ForStatementParser(_evaluator);
+                    parser = new ForStatementParser(_evaluator, _statementHelper);
                     break;
                 case StatementType.Value:
                     parser = new SimpleValueParser(_evaluator);

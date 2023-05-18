@@ -11,12 +11,14 @@ namespace MustacheTemplateProcessor.Tests.Mocks
         {
             var evaluator = new FormulaEvaluator(context);
             return evaluator.Eval<T>(expression);
+            return default(T);
         }
 
         public object Eval(string expression, Dictionary<string, object> context)
         {
             var evaluator = new FormulaEvaluator(context);
             return evaluator.Eval(expression);
+            return new object();
         }
     }
 }
