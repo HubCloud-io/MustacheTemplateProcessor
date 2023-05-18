@@ -239,6 +239,27 @@ Product id: 2, title: Product 2
         
             Assert.That(result, Is.EqualTo(ethalon));
         }
+        
+        [TestCase(1, "Output:\r\n=====\r\nRender for one item\r\n=====")]
+        [TestCase(2, "Output:\r\n=====\r\nRender collection\r\n=====")]
+        public void PrepareTemplate_TemplateWithIfElse_ReturnString(int itemsCount, string ethalon)
+        {
+            var template = @"Output:
+=====
+{{if items_count = 1 }}
+Render for one item
+{{else}}
+Render collection
+{{end}}
+=====";
+            var context = new Dictionary<string, object>();
+            context.Add("items_count", itemsCount);
+
+            var parser = GetParser();
+            var resultString = parser.Process(template, context);
+
+            Assert.That(resultString, Is.EqualTo(ethalon));
+        }
 
         #region DataTable test
 
@@ -282,31 +303,6 @@ Product id: 2, title: Product 2
 //
 //             Assert.That(resultString, Is.EqualTo(ethalon));
 //         }
-
-        #endregion
-
-        #region if-else
-
-        [TestCase(1, "Output:\r\n=====\r\nRender for one item\r\n=====")]
-        [TestCase(2, "Output:\r\n=====\r\nRender collection\r\n=====")]
-        public void PrepareTemplate_TemplateWithIfElse_ReturnString(int itemsCount, string ethalon)
-        {
-            var template = @"Output:
-=====
-{{if items_count = 1 }}
-Render for one item
-{{else}}
-Render collection
-{{end}}
-=====";
-            var context = new Dictionary<string, object>();
-            context.Add("items_count", itemsCount);
-
-            var parser = GetParser();
-            var resultString = parser.Process(template, context);
-
-            Assert.That(resultString, Is.EqualTo(ethalon));
-        }
 
         #endregion
     }
