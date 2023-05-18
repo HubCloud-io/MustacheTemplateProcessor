@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
 using System.Linq;
+using EvalEngine.FunctionLibrary;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 using MustacheTemplateProcessor.StatementParsers.Base;
@@ -30,28 +33,7 @@ namespace MustacheTemplateProcessor.StatementParsers
                 return string.Empty;
 
             IEnumerable<dynamic> items;
-            if (!collectionName.Contains("."))
-            {
-                if (!context.TryGetValue(collectionName, out var collection))
-                    return string.Empty;
-
-                if (collection is IEnumerable<dynamic>)
-                    items = collection as IEnumerable<dynamic>;
-                else
-                {
-                    if (!(collection is ICollection cl))
-                        return string.Empty;
-
-                    var tmp = new List<dynamic>();
-                    foreach (var item in cl)
-                    {
-                        tmp.Add(item);
-                    }
-
-                    items = tmp.Select(x => x);
-                }
-            }
-            else
+            if (collectionName.Contains("."))
             {
                 var statementArray = collectionName.Split('.');
                 var localContext = context[statementArray.First()];
@@ -64,7 +46,14 @@ namespace MustacheTemplateProcessor.StatementParsers
                         ?.GetValue(localContext, null);
                 }
 
-                items = localContext as IEnumerable<dynamic>;
+                items = GetAsDynamic(localContext);
+            }
+            else
+            {
+                if (!context.TryGetValue(collectionName, out var collection))
+                    return string.Empty;
+
+                items = GetAsDynamic(collection);
             }
 
             var output = string.Empty;
@@ -112,6 +101,51 @@ namespace MustacheTemplateProcessor.StatementParsers
                 return null;
 
             return statementArray.Last();
+        }
+        
+        private IEnumerable<dynamic> GetAsDynamic(object collection)
+        {
+            IEnumerable<dynamic> items;
+            
+            if (collection is DataTable dataTable)
+            {
+                items = ToDynamic(dataTable);
+            }
+            else if (collection is IEnumerable<dynamic>) // for enumerable with class items
+            {
+                items = collection as IEnumerable<dynamic>;
+            }
+            else // for enumerable with primitive types items (int, decimal, etc)
+            {
+                if (!(collection is ICollection cl))
+                    return Enumerable.Empty<dynamic>();
+
+                var tmp = new List<dynamic>();
+                foreach (var item in cl)
+                {
+                    tmp.Add(item);
+                }
+
+                items = tmp.Select(x => x);
+            }
+
+            return items;
+        }
+        
+        public IEnumerable<dynamic> ToDynamic(DataTable dt)
+        {
+            var dynamicDt = new List<dynamic>();
+            foreach (DataRow row in dt.Rows)
+            {
+                dynamic dyn = new ExpandoObject();
+                dynamicDt.Add(dyn);
+                foreach (DataColumn column in dt.Columns)
+                {
+                    var dic = (IDictionary<string, object>)dyn;
+                    dic[column.ColumnName] = row[column];
+                }
+            }
+            return dynamicDt;
         }
     }
 }

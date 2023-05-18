@@ -263,46 +263,46 @@ Render collection
 
         #region DataTable test
 
-//         [Test]
-//         public void PrepareTemplate_LoopOverDataTable_ReturnString()
-//         {
-//             var template = @"Products list:
-// =====
-// {{ for item in products }}
-// Product id: {{item.Id}}, title: {{item.Title}}
-// {{end}}
-// =====";
-//             var context = new Dictionary<string, object>();
-//
-//             var dataTable = new DataTable();
-//             dataTable.Columns.Add("Id", typeof(int));
-//             dataTable.Columns.Add("Title", typeof(string));
-//
-//             var row1 = dataTable.NewRow();
-//             row1["Id"] = 1;
-//             row1["Title"] = "Product 1";
-//
-//             dataTable.Rows.Add(row1);
-//
-//             var row2 = dataTable.NewRow();
-//             row2["Id"] = 2;
-//             row2["Title"] = "Product 2";
-//
-//             dataTable.Rows.Add(row2);
-//
-//             context.Add("products", dataTable);
-//
-//             var parser = GetParser();
-//             var resultString = parser.Process(template, context);
-//
-//             var ethalon = @"Products list:
-// =====
-// Product id: 1, title: Product 1
-// Product id: 2, title: Product 2
-// =====";
-//
-//             Assert.That(resultString, Is.EqualTo(ethalon));
-//         }
+        [Test]
+        public void PrepareTemplate_LoopOverDataTable_ReturnString()
+        {
+            var template = @"Products list:
+=====
+{{ for item in products }}
+Product id: {{item.Id}}, title: {{item.Title}}
+{{end}}
+=====";
+            var context = new Dictionary<string, object>();
+
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("Id", typeof(int));
+            dataTable.Columns.Add("Title", typeof(string));
+
+            var row1 = dataTable.NewRow();
+            row1["Id"] = 1;
+            row1["Title"] = "Product 1";
+
+            dataTable.Rows.Add(row1);
+
+            var row2 = dataTable.NewRow();
+            row2["Id"] = 2;
+            row2["Title"] = "Product 2";
+
+            dataTable.Rows.Add(row2);
+
+            context.Add("products", dataTable);
+
+            var parser = GetParser();
+            var resultString = parser.Process(template, context);
+
+            var ethalon = @"Products list:
+=====
+Product id: 1, title: Product 1
+Product id: 2, title: Product 2
+=====";
+
+            Assert.That(resultString, Is.EqualTo(ethalon));
+        }
 
         #endregion
     }
