@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using MustacheTemplateProcessor.StatementParsers;
+using MustacheTemplateProcessor.Tests.Mocks;
 using NUnit.Framework;
 
 namespace MustacheTemplateProcessor.Tests.StatementParsersTests
@@ -9,7 +10,7 @@ namespace MustacheTemplateProcessor.Tests.StatementParsersTests
     {
         private IfStatementBodies GetBodies(string expression)
         {
-            var parser = new IfStatementParser();
+            var parser = new IfStatementParser(new EvaluatorMock());
             var methodInfo = typeof(IfStatementParser).GetMethod("GetBodies", BindingFlags.NonPublic | BindingFlags.Instance);
             object[] parameters = {expression};
             

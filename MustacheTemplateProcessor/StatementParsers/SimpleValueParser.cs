@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EvalEngine.Engine;
-using MustacheTemplateProcessor.Common;
+using MustacheTemplateProcessor.Abstractions;
 using MustacheTemplateProcessor.Models;
 using MustacheTemplateProcessor.StatementParsers.Base;
 
@@ -9,6 +9,10 @@ namespace MustacheTemplateProcessor.StatementParsers
 {
     public class SimpleValueParser : BaseStatementParser, IStatementParser
     {
+        public SimpleValueParser(IEvaluator evaluator) : base(evaluator)
+        {
+        }
+        
         public string Process(StatementContext statementContext)
         {
             if (!IsValidStatementContext(statementContext))
@@ -21,8 +25,7 @@ namespace MustacheTemplateProcessor.StatementParsers
 
             try
             {
-                var evaluator = new FormulaEvaluator(new Dictionary<string, object>(statementContext.Context));
-                var result = evaluator.Eval(expression);
+                var result = Evaluator.Eval(expression, new Dictionary<string, object>(statementContext.Context));
                 return result?.ToString();
             }
             catch (Exception)

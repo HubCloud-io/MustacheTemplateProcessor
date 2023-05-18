@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
 using MustacheTemplateProcessor.StatementParsers;
+using MustacheTemplateProcessor.Tests.Mocks;
 using MustacheTemplateProcessor.Tests.Models;
 using NUnit.Framework;
 
@@ -11,7 +12,7 @@ namespace MustacheTemplateProcessor.Tests
     [TestFixture]
     public class TemplateParserLegacyTests
     {
-        private MustacheParser GetParser() => new MustacheParser();
+        private MustacheParser GetParser() => new MustacheParser(new EvaluatorMock());
 
         [Test]
         public void PrepareTemplate_ObjectContext_ReturnString()

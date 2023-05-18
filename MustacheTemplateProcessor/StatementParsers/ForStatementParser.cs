@@ -5,6 +5,7 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using EvalEngine.FunctionLibrary;
+using MustacheTemplateProcessor.Abstractions;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 using MustacheTemplateProcessor.StatementParsers.Base;
@@ -13,8 +14,13 @@ namespace MustacheTemplateProcessor.StatementParsers
 {
     public class ForStatementParser : BaseStatementParser, IStatementParser
     {
-        private readonly MustacheParser _parser = new MustacheParser();
+        private readonly MustacheParser _parser;
 
+        public ForStatementParser(IEvaluator evaluator) : base(evaluator)
+        {
+            _parser = new MustacheParser(evaluator);
+        }
+        
         public string Process(StatementContext statementContext)
         {
             if (!IsValidStatementContext(statementContext) || string.IsNullOrEmpty(statementContext.Body))

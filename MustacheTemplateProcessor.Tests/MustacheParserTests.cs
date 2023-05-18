@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MustacheTemplateProcessor.StatementParsers;
+using MustacheTemplateProcessor.Tests.Mocks;
 using MustacheTemplateProcessor.Tests.Models;
 using NUnit.Framework;
 
@@ -8,7 +9,7 @@ namespace MustacheTemplateProcessor.Tests
     [TestFixture]
     public class MustacheParserTests
     {
-        private MustacheParser GetParser() => new MustacheParser();
+        private MustacheParser GetParser() => new MustacheParser(new EvaluatorMock());
 
         [Test]
         public void PlainText_Test()

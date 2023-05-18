@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EvalEngine.Engine;
+using MustacheTemplateProcessor.Abstractions;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.LexemeAnalyzer;
 using MustacheTemplateProcessor.Models;
@@ -17,8 +18,13 @@ namespace MustacheTemplateProcessor.StatementParsers
 
     public class IfStatementParser : BaseStatementParser, IStatementParser
     {
-        private readonly MustacheParser _parser = new MustacheParser();
+        private readonly MustacheParser _parser;
 
+        public IfStatementParser(IEvaluator evaluator) : base(evaluator)
+        {
+            _parser = new MustacheParser(evaluator);
+        }
+        
         public string Process(StatementContext statementContext)
         {
             if (!IsValidStatementContext(statementContext) || string.IsNullOrEmpty(statementContext.Body))
@@ -32,11 +38,10 @@ namespace MustacheTemplateProcessor.StatementParsers
                 .Trim();
 
             var bodies = GetBodies(statementContext.Body);
-            var evaluator = new FormulaEvaluator(new Dictionary<string, object>(statementContext.Context));
             try
             {
                 string value;
-                var state = evaluator.Eval<bool>(condition);
+                var state = Evaluator.Eval<bool>(condition, new Dictionary<string, object>(statementContext.Context));
                 if (state)
                     value = _parser.Process(bodies.TrueStateBody,
                         new Dictionary<string, object>(statementContext.Context));

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using MustacheTemplateProcessor.Abstractions;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 using MustacheTemplateProcessor.StatementParsers;
@@ -10,8 +11,14 @@ namespace MustacheTemplateProcessor
 {
     public class MustacheParser : IMustacheParser
     {
+        private readonly IEvaluator _evaluator;
         private readonly StatementHelper _statementHelper = new StatementHelper();
 
+        public MustacheParser(IEvaluator evaluator)
+        {
+            _evaluator = evaluator;
+        }
+        
         public static bool TemplateContainsExpressions(string template)
             => template?.Contains(Statements.StartSymbol) ?? false;
 
@@ -79,13 +86,13 @@ namespace MustacheTemplateProcessor
             switch (type)
             {
                 case StatementType.If:
-                    parser = new IfStatementParser();
+                    parser = new IfStatementParser(_evaluator);
                     break;
                 case StatementType.For:
-                    parser = new ForStatementParser();
+                    parser = new ForStatementParser(_evaluator);
                     break;
                 case StatementType.Value:
-                    parser = new SimpleValueParser();
+                    parser = new SimpleValueParser(_evaluator);
                     break;
                 default:
                     return result;
@@ -101,21 +108,6 @@ namespace MustacheTemplateProcessor
                 startStatement.Type == StatementType.For)
                 expression = expression.Substring(startStatement.EndIndex + 1, endStatement.StartIndex - startStatement.EndIndex - 1);
 
-            return expression;
-        }
-
-        private string TrimStartNewLineSymbols(string expression)
-        {
-            do
-            {
-                if (expression[0] == '\r' || expression[0] == '\n')
-                    expression = expression.Substring(1, expression.Length - 1);
-                    
-                if (string.IsNullOrEmpty(expression))
-                    break;
-
-            } while (expression[0] == '\r' || expression[0] == '\n');
-            
             return expression;
         }
     }

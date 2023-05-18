@@ -1,4 +1,5 @@
 ﻿using System;
+using MustacheTemplateProcessor.Abstractions;
 using MustacheTemplateProcessor.Common;
 using MustacheTemplateProcessor.Models;
 
@@ -6,6 +7,12 @@ namespace MustacheTemplateProcessor.StatementParsers.Base
 {
     public class BaseStatementParser
     {
+        protected readonly IEvaluator Evaluator;
+        public BaseStatementParser(IEvaluator evaluator)
+        {
+            Evaluator = evaluator;
+        }
+        
         protected bool IsValidStatementContext(StatementContext statementContext)
         {
             if (statementContext?.Context is null || string.IsNullOrEmpty(statementContext.StartStatement?.Statement))
