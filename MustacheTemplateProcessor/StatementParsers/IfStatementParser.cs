@@ -41,8 +41,9 @@ namespace MustacheTemplateProcessor.StatementParsers
             try
             {
                 string value;
-                var state = Evaluator.Eval<bool>(condition, new Dictionary<string, object>(statementContext.Context));
-                if (state)
+                //var state = Evaluator.Eval<bool>(condition, new Dictionary<string, object>(statementContext.Context));
+                var state = Evaluator.Eval(condition, new Dictionary<string, object>(statementContext.Context));
+                if (bool.TryParse(state.ToString(), out var bState) && bState)
                     value = _parser.Process(bodies.TrueStateBody,
                         new Dictionary<string, object>(statementContext.Context));
                 else
@@ -111,11 +112,11 @@ namespace MustacheTemplateProcessor.StatementParsers
             return new IfStatementBodies
             {
                 TrueStateBody = body.Substring(0, currentElse.StartIndex),
-                FalseStateBody = Foo(body, currentElse)
+                FalseStateBody = GetFalseStateBody(body, currentElse)
             };
         }
 
-        private string Foo(string expression, Lexeme currentElse)
+        private string GetFalseStateBody(string expression, Lexeme currentElse)
         {
             var statementEnd = currentElse.EndIndex;
             
