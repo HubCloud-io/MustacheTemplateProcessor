@@ -41,7 +41,6 @@ namespace MustacheTemplateProcessor.StatementParsers
             try
             {
                 string value;
-                //var state = Evaluator.Eval<bool>(condition, new Dictionary<string, object>(statementContext.Context));
                 var state = Evaluator.Eval(condition, new Dictionary<string, object>(statementContext.Context));
                 if (bool.TryParse(state.ToString(), out var bState) && bState)
                     value = _parser.Process(bodies.TrueStateBody,
