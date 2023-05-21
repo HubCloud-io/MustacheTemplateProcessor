@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MustacheTemplateProcessor.Common;
 
 namespace MustacheTemplateProcessor.LexemeAnalyzer
@@ -14,7 +15,7 @@ namespace MustacheTemplateProcessor.LexemeAnalyzer
 
             var lexemeList = new List<Lexeme>();
 
-            var current = string.Empty;
+            var current = new StringBuilder();
             var isLexeme = false;
             var endBracket = 0;
 
@@ -25,48 +26,53 @@ namespace MustacheTemplateProcessor.LexemeAnalyzer
                 if (ch == '{' && !isLexeme)
                 {
                     isLexeme = true;
+                    var str = current.ToString();
                     lexemeList.Add(new Lexeme
                     {
-                        Value = current,
-                        Type = GetType(current),
+                        Value = str,
+                        Type = GetType(str),
                         StartIndex = currentLexemeStartIndex,
                         EndIndex = currentIndex - 1
                     });
 
-                    current = string.Empty;
+                    current.Clear();
                     currentLexemeStartIndex = currentIndex;
                 }
 
                 if (ch == '}' && endBracket < 2)
                     endBracket++;
 
-                current += ch;
+                current.Append(ch);
 
                 if (endBracket == 2)
                 {
                     endBracket = 0;
                     isLexeme = false;
+                    
+                    var str = current.ToString();
                     lexemeList.Add(new Lexeme
                     {
-                        Value = current,
-                        Type = GetType(current),
+                        Value = str,
+                        Type = GetType(str),
                         StartIndex = currentLexemeStartIndex,
                         EndIndex = currentIndex
                     });
 
-                    current = string.Empty;
+                    current.Clear();
                     currentLexemeStartIndex = currentIndex + 1;
                 }
 
                 currentIndex++;
             }
 
-            if (!string.IsNullOrEmpty(current))
+            // if (!string.IsNullOrEmpty(current))
+            if (current.Length != 0)
             {
+                var str = current.ToString();
                 lexemeList.Add(new Lexeme
                 {
-                    Value = current,
-                    Type = GetType(current),
+                    Value = str,
+                    Type = GetType(str),
                     StartIndex = currentLexemeStartIndex,
                     EndIndex = currentIndex
                 });

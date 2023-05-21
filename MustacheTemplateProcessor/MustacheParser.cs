@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using MustacheTemplateProcessor.Abstractions;
 using MustacheTemplateProcessor.Common;
@@ -26,7 +27,7 @@ namespace MustacheTemplateProcessor
             ILogger logger = null,
             int maxIterationCount = 1000)
         {
-            var output = string.Empty;
+            var output = new StringBuilder();
 
             logger?.LogInformation($"Process started, Expression = {expression}");
             var currentIteration = 0;
@@ -41,11 +42,11 @@ namespace MustacheTemplateProcessor
                 catch (NoStatementException)
                 {
                     logger?.LogInformation($"Expression = {expression}, throw NoStatementException");
-                    output += expression;
+                    output.Append(expression);
                     break;
                 }
 
-                output += expression.Substring(0, startStatement.StartIndex);
+                output.Append(expression.Substring(0, startStatement.StartIndex));
                 var endStatement = StatementHelper.GetEndStatement(expression, startStatement);
                 logger?.LogInformation($"EndStatement = {endStatement}");
                 var statementContext = new StatementContext
@@ -58,7 +59,7 @@ namespace MustacheTemplateProcessor
                 logger?.LogInformation($"StatementContext Body = {statementContext.Body}");
 
                 var statementValue = GetStatementValue(statementContext, startStatement.Type);
-                output += statementValue;
+                output.Append(statementValue);
                 logger?.LogInformation($"StatementValue = {statementValue}");
 
                 expression = expression.Substring(endStatement.EndIndex + 1, expression.Length - endStatement.EndIndex - 1);
@@ -69,13 +70,13 @@ namespace MustacheTemplateProcessor
                 if (expression.Any() && currentIteration > maxIterationCount)
                 {
                     logger?.LogWarning($"Emergency exit:: currentIteration={currentIteration}, MaxIterationCount = {maxIterationCount}");
-                    output += expression;
+                    output.Append(expression);
                     break;
                 }
             } while (expression.Any());
             
             logger?.LogInformation($"Process ended");
-            return output;
+            return output.ToString();
         }
 
         private string GetStatementValue(StatementContext statementContext, StatementType type)

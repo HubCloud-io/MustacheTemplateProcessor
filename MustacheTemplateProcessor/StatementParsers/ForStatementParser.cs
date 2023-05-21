@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
 using System.Linq;
+using System.Text;
 using EvalEngine.FunctionLibrary;
 using MustacheTemplateProcessor.Abstractions;
 using MustacheTemplateProcessor.Common;
@@ -62,10 +63,10 @@ namespace MustacheTemplateProcessor.StatementParsers
                 items = GetAsDynamic(collection);
             }
 
-            var output = string.Empty;
+            var output = new StringBuilder();
 
             if (items is null)
-                return output;
+                return output.ToString();
 
             var innerContext = new Dictionary<string, object>(context);
             foreach (var item in items)
@@ -74,7 +75,7 @@ namespace MustacheTemplateProcessor.StatementParsers
                 try
                 {
                     var val = _parser.Process(statementContext.Body, innerContext);
-                    output += val;
+                    output.Append(val);
                 }
                 catch (Exception)
                 {
@@ -82,7 +83,7 @@ namespace MustacheTemplateProcessor.StatementParsers
                 }
             }
 
-            return output;
+            return output.ToString();
         }
 
         private string GetItemName(ParsedStatement statement)
