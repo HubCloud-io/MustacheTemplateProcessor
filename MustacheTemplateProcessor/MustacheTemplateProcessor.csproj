@@ -1,10 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <RootNamespace>MustacheTemplateProcessor</RootNamespace>
+    <Version>0.1.1</Version>
+    <Copyright>HubCloud.io</Copyright>
+    <Description>Process mustache text templates</Description>
+    <RepositoryUrl>https://github.com/HubCloud-io/MustacheTemplateProcessor</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>HubCloud.MustacheTemplateProcessor</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
