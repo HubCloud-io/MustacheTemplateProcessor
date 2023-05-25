@@ -18,7 +18,7 @@ namespace MustacheTemplateProcessor
         {
             _evaluator = evaluator;
         }
-        
+
         public static bool TemplateContainsExpressions(string template)
             => template?.Contains(Statements.StartSymbol) ?? false;
 
@@ -33,19 +33,14 @@ namespace MustacheTemplateProcessor
             var currentIteration = 0;
             do
             {
-                ParsedStatement startStatement;
-                try
+                var startStatement = StatementHelper.GetStartStatement(expression);
+                logger?.LogInformation($"StartStatement = {startStatement}");
+                if (startStatement is null)
                 {
-                    startStatement = StatementHelper.GetStartStatement(expression);
-                    logger?.LogInformation($"StartStatement = {startStatement}");
-                }
-                catch (NoStatementException)
-                {
-                    logger?.LogInformation($"Expression = {expression}, throw NoStatementException");
                     output.Append(expression);
                     break;
                 }
-
+                
                 output.Append(expression.Substring(0, startStatement.StartIndex));
                 var endStatement = StatementHelper.GetEndStatement(expression, startStatement);
                 logger?.LogInformation($"EndStatement = {endStatement}");
@@ -62,19 +57,21 @@ namespace MustacheTemplateProcessor
                 output.Append(statementValue);
                 logger?.LogInformation($"StatementValue = {statementValue}");
 
-                expression = expression.Substring(endStatement.EndIndex + 1, expression.Length - endStatement.EndIndex - 1);
+                expression = expression.Substring(endStatement.EndIndex + 1,
+                    expression.Length - endStatement.EndIndex - 1);
 
                 currentIteration++;
 
                 // Emergency exit
                 if (expression.Any() && currentIteration > maxIterationCount)
                 {
-                    logger?.LogWarning($"Emergency exit:: currentIteration={currentIteration}, MaxIterationCount = {maxIterationCount}");
+                    logger?.LogWarning(
+                        $"Emergency exit:: currentIteration={currentIteration}, MaxIterationCount = {maxIterationCount}");
                     output.Append(expression);
                     break;
                 }
             } while (expression.Any());
-            
+
             logger?.LogInformation($"Process ended");
             return output.ToString();
         }
@@ -101,12 +98,13 @@ namespace MustacheTemplateProcessor
             result = parser.Process(statementContext);
             return result;
         }
-        
+
         private string GetBody(string expression, ParsedStatement startStatement, ParsedStatement endStatement)
         {
             if (startStatement.Type == StatementType.If ||
                 startStatement.Type == StatementType.For)
-                expression = expression.Substring(startStatement.EndIndex + 1, endStatement.StartIndex - startStatement.EndIndex - 1);
+                expression = expression.Substring(startStatement.EndIndex + 1,
+                    endStatement.StartIndex - startStatement.EndIndex - 1);
 
             return expression;
         }
