@@ -12,7 +12,7 @@ namespace MustacheTemplateProcessor
         {
             var statementStart = expression.IndexOf(Statements.StartSymbol, StringComparison.InvariantCultureIgnoreCase);
             if (statementStart == -1)
-                throw new NoStatementException();
+                return null;
 
             var statementEnd = expression.IndexOf(Statements.EndSymbol, StringComparison.InvariantCultureIgnoreCase);
             if (statementEnd == -1)
