@@ -106,10 +106,10 @@ namespace MustacheTemplateProcessor
             if (string.IsNullOrEmpty(statement))
                 return StatementType.Undefined;
 
-            if (statement.IndexOf(Statements.For, StringComparison.InvariantCultureIgnoreCase) != -1)
+            if (statement.IndexOf(WrapStatement(Statements.For), StringComparison.InvariantCultureIgnoreCase) != -1)
                 return StatementType.For;
 
-            if (statement.IndexOf(Statements.If, StringComparison.InvariantCultureIgnoreCase) != -1)
+            if (statement.IndexOf(WrapStatement(Statements.If), StringComparison.InvariantCultureIgnoreCase) != -1)
                 return StatementType.If;
             
             if (statement.IndexOf(Statements.End, StringComparison.InvariantCultureIgnoreCase) != -1)
@@ -117,5 +117,7 @@ namespace MustacheTemplateProcessor
 
             return StatementType.Value;
         }
+
+        private static string WrapStatement(string statement) => $"{statement} ";
     }
 }
