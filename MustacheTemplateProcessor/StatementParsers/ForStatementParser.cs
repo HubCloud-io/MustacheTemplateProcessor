@@ -142,7 +142,7 @@ namespace MustacheTemplateProcessor.StatementParsers
             var dynamicDt = new List<dynamic>();
             foreach (DataRow row in dt.Rows)
             {
-                dynamic dyn = new ExpandoObject();
+                var dyn = new ExpandoObject();
                 dynamicDt.Add(dyn);
                 foreach (DataColumn column in dt.Columns)
                 {
