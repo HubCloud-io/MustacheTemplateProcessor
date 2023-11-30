@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
 using MustacheTemplateProcessor.Abstractions;
 using MustacheTemplateProcessor.Models;
 using MustacheTemplateProcessor.StatementParsers.Base;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace MustacheTemplateProcessor.StatementParsers
 {
@@ -11,12 +15,12 @@ namespace MustacheTemplateProcessor.StatementParsers
         public SimpleValueParser(IEvaluator evaluator) : base(evaluator)
         {
         }
-        
+
         public string Process(StatementContext statementContext)
         {
             if (!IsValidStatementContext(statementContext))
                 return string.Empty;
-            
+
             if (!IsValidStartStatement(statementContext))
                 return statementContext.StartStatement.Statement;
 
@@ -25,7 +29,15 @@ namespace MustacheTemplateProcessor.StatementParsers
             try
             {
                 var result = Evaluator.Eval(expression, new Dictionary<string, object>(statementContext.Context));
-                return result?.ToString();
+
+                var resultStr = result?.ToString();
+                if (result is ExpandoObject || result is DataTable || result is List<object>)
+                    resultStr = JsonConvert.SerializeObject(result, Formatting.None,
+                        new JsonSerializerSettings {ContractResolver = new CamelCasePropertyNamesContractResolver()});
+                else
+                    resultStr = result?.ToString();
+
+                return resultStr;
             }
             catch (Exception)
             {
